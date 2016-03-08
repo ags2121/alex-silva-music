@@ -56,7 +56,7 @@
                                     :future-half {:collection :face-of-man
                                                   :category   :face-of-man}
 
-                                    :le-chat-roulette {:category  :other
+                                    :la-chat-roulette {:category  :other
                                                        :year      2010
                                                        :performer :face-of-man-quintet
                                                        :credits   face-of-man-quintet-creds}

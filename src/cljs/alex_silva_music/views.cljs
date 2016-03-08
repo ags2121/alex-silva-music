@@ -43,42 +43,42 @@
     (fn []
       [:div {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
        [:h1 (id->name panel-id)]
-       panel-body])))
+       [panel-body]])))
 
-(defn face-of-man-panel []
-  (let [panel-id :face-of-man
-        collections (subscribe [:collections])]
+(defn face-of-man-component []
+  (let [collections (subscribe [:collections])]
     (fn []
-      [panel panel-id
-       [:ul.collections
-        (for [collection-id @collections]
-          ^{:key collection-id}
-          [:li [collection panel-id collection-id]])]])))
+      [:ul.collections
+       (for [collection-id @collections]
+         ^{:key collection-id}
+         [:li [collection :face-of-man collection-id]])])))
 
-(defn other-panel []
+(defn other-component []
   (let [other-tracks (subscribe [:tracks-by-category :other])]
     (fn []
-      [panel :other
-       [:ul.other
-        (for [track-data @other-tracks]
-          ^{:key (key track-data)}
-          [:li.track
-           [track track-data]])]])))
+      [:ul.other
+       (for [track-data @other-tracks]
+         ^{:key (key track-data)}
+         [:li.track
+          [track track-data]])])))
 
-(defn links-panel []
+(defn links-component []
   (let [links (subscribe [:links])]
     (fn []
-      [panel :links
-       [:ul.links
-        (for [link @links]
-          ^{:key (key link)}
-          [:li.link
-           [:a {:href (val link) :target "_blank"} (id->name (key link))]])]])))
+      [:ul.links
+       (for [link @links]
+         ^{:key (key link)}
+         [:li.link
+          [:a {:href (val link) :target "_blank"} (id->name (key link))]])])))
 
-
-(defn likes-panel []
-  (fn []
-    [panel :likes [:div "sup"]]))
+(defn likes-component []
+  (let [liked-tracks (subscribe [:liked-tracks])]
+    (fn []
+      [:ul.liked-tracks
+       (for [track-data @liked-tracks]
+         ^{:key (key track-data)}
+         [:li [track track-data]])]
+      )))
 
 (defn header []
   (let [header-data (subscribe [:header-data])]
@@ -126,7 +126,7 @@
   [:div
    [track-player]
    [header]
-   [face-of-man-panel]
-   [other-panel]
-   [links-panel]
-   [likes-panel]])
+   [panel :face-of-man face-of-man-component]
+   [panel :other other-component]
+   [panel :links links-component]
+   [panel :likes likes-component]])
