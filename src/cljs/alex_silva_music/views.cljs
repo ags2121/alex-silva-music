@@ -1,8 +1,7 @@
 (ns alex-silva-music.views
   (:require [re-frame.core :refer [subscribe dispatch]]
             [clojure.string :as str :refer [replace capitalize]]
-            [reagent.core :as reagent :refer [dom-node]]
-            [alex-silva-music.db :as db]))
+            [reagent.core :as reagent :refer [dom-node]]))
 
 (defn capitalize-all [string]
   (str/join " " (map #(if (contains? #{"of" "i" "ii"} %) % (str/capitalize %)) (str/split string #" "))))
@@ -23,14 +22,16 @@
         (if (nil? display-name) (id->name track-id) display-name)]
        [:span {:class    (if @is-liked "liked" "not-liked")
                :on-click #(dispatch [:set-track-liked track-id])} " ♥"]
+       [:a.soundcloud {:href (-> track-data val :soundcloud-url)}
+        [:img {:src "/assets/soundcloud-icon.png" :height 10 :width 10}]]
        ])))
 
-(defn collection [panel-id collection-id]
+(defn collection [collection-id]
   (let [active-collection-id (subscribe [:active-collection-id])
         collection (subscribe [:collection collection-id])]
     (fn []
       [:div.collection
-       [:a {:href (str "#/" (name panel-id) "/" (name collection-id))}
+       [:div {:on-click #(dispatch [:set-active-collection collection-id])}
         (str (id->name collection-id) (if-not (nil? (:year @collection)) (str " (" (:year @collection) ")")))]
        [:ul {:class (if (= collection-id @active-collection-id) "selected" "hidden")}
         (for [track-data (:tracks @collection)]
@@ -51,7 +52,7 @@
       [:ul.collections
        (for [collection-id @collections]
          ^{:key collection-id}
-         [:li [collection :face-of-man collection-id]])])))
+         [:li [collection collection-id]])])))
 
 (defn other-component []
   (let [other-tracks (subscribe [:tracks-by-category :other])]
@@ -114,12 +115,12 @@
        (fn []
          [:div
           [:audio {:controls "controls"}
-           [:source {:src      (if-not (nil? @playing-track) (db/get-track-link (name (:track-id @playing-track))))
+           [:source {:src      (if @playing-track (:url @playing-track))
                      :type     "audio/mpeg"
                      :controls "controls"}]]
           [:div.now-playing
            "Now Playing: "
-           [:span.italic (str "\"" (id->name (:track-id @playing-track)) "\"")]
+           [:span.italic (if @playing-track (str "\"" (id->name (:track-id @playing-track)) "\""))]
            ]])})))
 
 (defn main-panel []

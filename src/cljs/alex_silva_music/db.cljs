@@ -32,11 +32,15 @@
                                                                       "Jojo Samuels" ["lady vocals on \"Future Half\""])})
 
    :tracks               (array-map :planes {:collection :some-recent-stuff
-                                             :category   :face-of-man}
+                                             :category   :face-of-man
+                                             :liked      true}
 
                                     :bouquet {:collection :some-recent-stuff
-                                              :category   :face-of-man
-                                              :liked      true}
+                                              :category   :face-of-man}
+
+                                    :like-devils-fly {:collection :at-the-pheelharmonic
+                                                      :category   :face-of-man
+                                                      :liked      true}
 
                                     :altiloquence {:collection :at-the-pheelharmonic
                                                    :category   :face-of-man}
@@ -44,14 +48,12 @@
                                     :fast-car {:collection :at-the-pheelharmonic
                                                :category   :face-of-man}
 
-                                    :like-devils-fly {:collection :at-the-pheelharmonic
-                                                      :category   :face-of-man}
+                                    :ethnopoetics {:collection :face-of-man
+                                                   :category   :face-of-man
+                                                   :liked      true}
 
                                     :a-sharper-image {:collection :face-of-man
                                                       :category   :face-of-man}
-
-                                    :ethnopoetics {:collection :face-of-man
-                                                   :category   :face-of-man}
 
                                     :future-half {:collection :face-of-man
                                                   :category   :face-of-man}
@@ -59,7 +61,8 @@
                                     :la-chat-roulette {:category  :other
                                                        :year      2010
                                                        :performer :face-of-man-quintet
-                                                       :credits   face-of-man-quintet-creds}
+                                                       :credits   face-of-man-quintet-creds
+                                                       :liked     true}
 
                                     :mr-silvas-magnet-school {:display-name "Mr Silva's Magnet School"
                                                               :category     :other
@@ -101,12 +104,28 @@
    :active-panel         :face-of-man
    :active-collection-id nil
    :active-track-id      nil
-   :playing-track        {:track-id :bouquet
-                          :state    nil}
    })
 
-(defn is-collection [collection-id]
-  (not (nil? (-> default-db :collections collection-id))))
+(defn add-track-url [track-id track-data]
+  (let [track-name (name track-id)
+        [url sc-url score-url] (map #(str % track-name) [base-music-url base-sc-url base-score-url])
+        has-score? (= (-> track-data :category) :other)
+        track-urls (merge {:soundcloud-url sc-url
+                           :url        (str url ".mp3")}
+                          (if has-score?
+                            {:score-url (str score-url ".pdf")}
+                            {}))]
+    (merge track-data track-urls)))
+
+(defn add-track-urls [db]
+  (reduce
+    (fn [d track-id]
+      (update-in d [:tracks track-id] #(add-track-url track-id %)))
+    db
+    (keys (:tracks default-db))))
+
+(defn get-default-db []
+  (add-track-urls default-db))
 
 (defn get-panels []
   [:face-of-man :other :links :likes])

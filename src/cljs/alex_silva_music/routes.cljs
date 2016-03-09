@@ -21,19 +21,5 @@
   (defroute "/:panel" [panel]
             (dispatch [:set-active-panel (keyword panel)]))
 
-  (defroute "/:panel/:collection-or-track" [panel collection-or-track]
-            (let [panel (keyword panel)
-                  collection-or-track (keyword collection-or-track)]
-              (dispatch [:set-active-panel panel])
-              (let [dispatch-fn-id (if (db/is-collection collection-or-track)
-                                     :set-active-collection
-                                     :set-active-track)]
-                (dispatch [dispatch-fn-id collection-or-track]))))
-
-  (defroute "/:panel/:collection/:track" [panel collection track]
-            (dispatch [:set-active-panel (keyword panel)])
-            (dispatch [:set-active-collection (keyword collection)])
-            (dispatch [:set-active-track (keyword track)]))
-
   ;; --------------------
   (hook-browser-navigation!))

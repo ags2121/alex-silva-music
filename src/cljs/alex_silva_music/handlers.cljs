@@ -5,7 +5,7 @@
 (register-handler
  :initialize-db
  (fn  [_ _]
-   db/default-db))
+   (db/get-default-db)))
 
 (register-handler
   :set-active-panel
@@ -39,11 +39,12 @@
 (register-handler
   :set-playing-track
   (path :playing-track)
-  (fn [current-playing-track-info [_ new-playing-track-id]]
-    (.log js/console (str current-playing-track-info " " new-playing-track-id))
+  (fn [current-playing-track-info [_ new-playing-track-id new-state]]
     (if (= (:track-id current-playing-track-info) new-playing-track-id)
       (assoc current-playing-track-info :state (if (= (:state current-playing-track-info) :play)
                                                  :pause
                                                  :play)
                                         :load? false)
-      {:track-id new-playing-track-id :state :play :load? true})))
+      (let [track-url (-> (db/get-default-db) :tracks new-playing-track-id :url)
+            state (if new-state new-state :play)]
+        {:track-id new-playing-track-id :url track-url :state state :load? true}))))

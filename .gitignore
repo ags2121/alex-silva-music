@@ -1,4 +1,3 @@
-/*.log
 /target
 /*-init.clj
 /resources/public/js/compiled
@@ -7,3 +6,5 @@ out
 *.lein*
 .nrepl*
 .idea/
+.DS_Store
+*.log
