@@ -17,13 +17,13 @@
         is-active-track (= track-id @active-track-id)]
     (fn []
       [:div.track
-       [:span {:class    (if is-active-track "selected")
+       [:span.track-name {:class    (if is-active-track "selected")
                :on-click #(dispatch [:set-playing-track track-id])}
         (if (nil? display-name) (id->name track-id) display-name)]
        [:span {:class    (if @is-liked "liked" "not-liked")
                :on-click #(dispatch [:set-track-liked track-id])} " ♥"]
-       [:a.soundcloud {:href (-> track-data val :soundcloud-url)}
-        [:img {:src "/assets/soundcloud-icon.png" :height 10 :width 10}]]
+       [:a.soundcloud {:href (-> track-data val :soundcloud-url) :target "_blank"}
+        [:img {:src "/assets/soundcloud.png" :height 10 :width 10}]]
        ])))
 
 (defn collection [collection-id]
@@ -31,7 +31,7 @@
         collection (subscribe [:collection collection-id])]
     (fn []
       [:div.collection
-       [:div {:on-click #(dispatch [:set-active-collection collection-id])}
+       [:div.collection-name {:on-click #(dispatch [:set-active-collection collection-id])}
         (str (id->name collection-id) (if-not (nil? (:year @collection)) (str " (" (:year @collection) ")")))]
        [:ul {:class (if (= collection-id @active-collection-id) "selected" "hidden")}
         (for [track-data (:tracks @collection)]
@@ -70,7 +70,10 @@
        (for [link @links]
          ^{:key (key link)}
          [:li.link
-          [:a {:href (val link) :target "_blank"} (id->name (key link))]])])))
+          [:a {:href (val link) :target "_blank"}
+           (let [link-name (id->name (key link))]
+             [:img {:src (str "/assets/" link-name ".png") :alt link-name :height 90 :width 90}])
+           ]])])))
 
 (defn likes-component []
   (let [liked-tracks (subscribe [:liked-tracks])]
@@ -125,7 +128,10 @@
 
 (defn main-panel []
   [:div
-   [track-player]
+   [:div
+    [:h1 "alex silva music"]
+    [track-player]]
+   [:hr]
    [header]
    [panel :face-of-man face-of-man-component]
    [panel :other other-component]

@@ -33,9 +33,9 @@
               {:app
                {:source-paths ["src/cljs"]
 
-                :figwheel true
+                ;:figwheel true
                 ;; Alternatively, you can configure a function to run every time figwheel reloads.
-                ;; :figwheel {:on-jsload "alex-silva-music.core/mount-root"}
+                 :figwheel {:on-jsload "alex-silva-music.core/mount-root"}
 
 
                 :compiler {:main alex-silva-music.core
