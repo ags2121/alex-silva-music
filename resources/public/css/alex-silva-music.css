@@ -56,14 +56,35 @@ ul {
 
 li.link {
     display: inline;
+    margin-right: 0.5em;
 }
 
-.collection-name, .track-name {
+.track > * {
+    margin-right: 0.5em;
+}
+
+.icon {
+    vertical-align: middle;
+}
+
+.collection-name, .track-name, .liked, .not-liked {
     cursor: pointer;
 }
 
 hr {
     border: 0.2em solid #4d4d4d;
+}
+
+h1 {
+    font-size: 4.0rem;
+    -webkit-text-rendering: optimizeLegibility;
+    -moz-text-rendering: optimizeLegibility;
+    text-rendering: optimizeLegibility;
+}
+
+.now-playing {
+    font-size: 1rem;
+    display: inline;
 }
 
 button,
@@ -311,6 +332,7 @@ label[for='toggle-all'] {
 
 .panels {
     list-style: none;
+    font-size: 2.5rem;
 }
 
 .panels li {

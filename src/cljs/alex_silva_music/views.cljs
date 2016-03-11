@@ -9,6 +9,10 @@
 (defn id->name [id]
   (-> id name (str/replace "-" " ") capitalize-all))
 
+(defn track-link [track-data link-key]
+  [:a {:class (str (name link-key) " icon") :href (-> track-data val link-key) :target "_blank"}
+   [:img {:src (str "/assets/" (name link-key) ".png") :height 20 :width 20}]])
+
 (defn track [track-data]
   (let [track-id (key track-data)
         display-name (-> track-data val :display-name)
@@ -22,8 +26,9 @@
         (if (nil? display-name) (id->name track-id) display-name)]
        [:span {:class    (if @is-liked "liked" "not-liked")
                :on-click #(dispatch [:set-track-liked track-id])} " ♥"]
-       [:a.soundcloud {:href (-> track-data val :soundcloud-url) :target "_blank"}
-        [:img {:src "/assets/soundcloud.png" :height 10 :width 10}]]
+       [track-link track-data :soundcloud]
+       (if (-> track-data val :score)
+         [track-link track-data :score])
        ])))
 
 (defn collection [collection-id]
@@ -43,7 +48,6 @@
   (let [active-panel-id (subscribe [:active-panel])]
     (fn []
       [:div {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
-       [:h1 (id->name panel-id)]
        [panel-body]])))
 
 (defn face-of-man-component []

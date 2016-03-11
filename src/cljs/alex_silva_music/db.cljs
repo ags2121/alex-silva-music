@@ -110,10 +110,10 @@
   (let [track-name (name track-id)
         [url sc-url score-url] (map #(str % track-name) [base-music-url base-sc-url base-score-url])
         has-score? (= (-> track-data :category) :other)
-        track-urls (merge {:soundcloud-url sc-url
+        track-urls (merge {:soundcloud sc-url
                            :url        (str url ".mp3")}
                           (if has-score?
-                            {:score-url (str score-url ".pdf")}
+                            {:score (str score-url ".pdf")}
                             {}))]
     (merge track-data track-urls)))
 
