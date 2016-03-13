@@ -71,6 +71,10 @@ li.link {
     cursor: pointer;
 }
 
+.header {
+    margin-left: 1%;
+}
+
 hr {
     border: 0.2em solid #4d4d4d;
 }
@@ -82,9 +86,14 @@ h1 {
     text-rendering: optimizeLegibility;
 }
 
+.controls {
+    vertical-align: middle;
+}
+
 .now-playing {
     font-size: 1rem;
     display: inline;
+    margin-left: 5%;
 }
 
 button,
@@ -331,7 +340,6 @@ label[for='toggle-all'] {
 }
 
 .panels {
-    list-style: none;
     font-size: 2.5rem;
 }
 
@@ -341,10 +349,10 @@ label[for='toggle-all'] {
 
 .panels li a {
     color: inherit;
-    margin: 3px;
+    margin-right: 1%;
     padding: 3px 7px;
     text-decoration: none;
-    border: 1px solid transparent;
+    border: 2px solid transparent;
     border-radius: 3px;
 }
 
@@ -409,7 +417,7 @@ html .clear-completed:active {
 
     .toggle-all {
         -webkit-transform: rotate(90deg);
-        transform: rotate(90deg);
+        transform: rotate(90deg);:div.header
         -webkit-appearance: none;
         appearance: none;
     }

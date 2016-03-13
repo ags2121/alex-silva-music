@@ -66,7 +66,7 @@
     (reaction (-> @db :tracks track-id :liked))))
 
 (re-frame/register-sub
-  :header-data
+  :menu-data
   (fn [db _]
     (let [liked-tracks-count (reaction (count (liked-tracks @db)))
           active-panel-id (reaction (:active-panel @db))]

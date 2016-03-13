@@ -88,10 +88,10 @@
          [:li [track track-data]])]
       )))
 
-(defn header []
-  (let [header-data (subscribe [:header-data])]
+(defn menu []
+  (let [menu-data (subscribe [:menu-data])]
     (fn []
-      (let [[liked-tracks-count panels active-panel-id] @header-data]
+      (let [[liked-tracks-count panels active-panel-id] @menu-data]
         [:ul.panels
          (for [panel-id panels]
            ^{:key panel-id}
@@ -121,7 +121,7 @@
        :reagent-render
        (fn []
          [:div
-          [:audio {:controls "controls"}
+          [:audio.controls {:controls "controls"}
            [:source {:src      (if @playing-track (:url @playing-track))
                      :type     "audio/mpeg"
                      :controls "controls"}]]
@@ -132,11 +132,11 @@
 
 (defn main-panel []
   [:div
-   [:div
+   [:div.header
     [:h1 "alex silva music"]
     [track-player]]
    [:hr]
-   [header]
+   [menu]
    [panel :face-of-man face-of-man-component]
    [panel :other other-component]
    [panel :links links-component]
