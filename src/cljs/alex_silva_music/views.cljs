@@ -24,11 +24,11 @@
        [:span.track-name {:class    (if is-active-track "selected")
                :on-click #(dispatch [:set-playing-track track-id])}
         (if (nil? display-name) (id->name track-id) display-name)]
-       [:span {:class    (if @is-liked "liked" "not-liked")
-               :on-click #(dispatch [:set-track-liked track-id])} " ♥"]
-       [track-link track-data :soundcloud]
        (if (-> track-data val :score)
          [track-link track-data :score])
+       [track-link track-data :soundcloud]
+       [:span {:class    (if @is-liked "liked" "not-liked")
+               :on-click #(dispatch [:set-track-liked track-id])} " ♥"]
        ])))
 
 (defn collection [collection-id]
@@ -47,7 +47,7 @@
 (defn panel [panel-id panel-body]
   (let [active-panel-id (subscribe [:active-panel])]
     (fn []
-      [:div {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
+      [:div.panel {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
        [panel-body]])))
 
 (defn face-of-man-component []
@@ -64,7 +64,7 @@
       [:ul.other
        (for [track-data @other-tracks]
          ^{:key (key track-data)}
-         [:li.track
+         [:li.track-container
           [track track-data]])])))
 
 (defn links-component []
@@ -82,7 +82,7 @@
 (defn likes-component []
   (let [liked-tracks (subscribe [:liked-tracks])]
     (fn []
-      [:ul.liked-tracks
+      [:ul.likes
        (for [track-data @liked-tracks]
          ^{:key (key track-data)}
          [:li [track track-data]])]
@@ -135,7 +135,6 @@
    [:div.header
     [:h1 "alex silva music"]
     [track-player]]
-   [:hr]
    [menu]
    [panel :face-of-man face-of-man-component]
    [panel :other other-component]
