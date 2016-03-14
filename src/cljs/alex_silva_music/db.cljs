@@ -16,7 +16,7 @@
              "Jesse Chevan" ["Drums"]))
 
 (def default-db
-  {:collections          (array-map :some-recent-stuff {:credits [{"Alex Silva" ["vocals" "guitar"]}]}
+  {:collections          (array-map :recent-work {:credits [{"Alex Silva" ["vocals" "guitar"]}]}
 
                                     :at-the-pheelharmonic {:year    2012
                                                            :credits [{"Alex Silva" ["lead vocals" "guitar" "synths" "electronics"]}
@@ -31,11 +31,11 @@
                                                                       "Coleman Moore" ["mixing engineer" "drum programming on \"A Sharper Image\""]
                                                                       "Jojo Samuels" ["lady vocals on \"Future Half\""])})
 
-   :tracks               (array-map :planes {:collection :some-recent-stuff
+   :tracks               (array-map :planes {:collection :recent-work
                                              :category   :face-of-man
                                              :liked      true}
 
-                                    :bouquet {:collection :some-recent-stuff
+                                    :bouquet {:collection :recent-work
                                               :category   :face-of-man}
 
                                     :like-devils-fly {:collection :at-the-pheelharmonic
