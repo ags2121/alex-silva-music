@@ -47,10 +47,22 @@ ul {
     margin: 0 29%;
 }
 
-/*.panel ul {*/
-    /*display: table;*/
-    /*margin: 0 29%;*/
-/*}*/
+.collections {
+    display: flex;
+    display: -webkit-flex;
+    flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+    justify-content: center;
+    -webkit-justify-content: center;
+}
+
+.collections li {
+    /*display: inline;*/
+}
+
+.collection-container {
+    float: left;
+}
 
 .italic {
     font-style: italic;
@@ -58,10 +70,12 @@ ul {
 
 .not-liked {
     color: white;
+    float: right;
 }
 
 .liked {
     color: black;
+    float: right;
 }
 
 .links {
@@ -72,13 +86,22 @@ img {
     border-radius: 0.3em;
 }
 
+.alex {
+    width: 10em;
+    display: block;
+    bottom: 0;
+    position: fixed;
+    left: 50%;
+    margin-left: -5em;
+}
+
 li.link {
     display: inline;
     margin-right: 0.5em;
 }
 
 .track {
-    /*width: 33%;*/
+    min-width: 364px;
 }
 
 .track > * {
@@ -87,6 +110,7 @@ li.link {
 
 .icon {
     vertical-align: middle;
+    float: right;
 }
 
 .collection-name, .track-name, .liked, .not-liked {

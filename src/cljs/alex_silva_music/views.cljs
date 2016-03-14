@@ -56,7 +56,7 @@
       [:ul.collections
        (for [collection-id @collections]
          ^{:key collection-id}
-         [:li [collection collection-id]])])))
+         [:li.collection-container [collection collection-id]])])))
 
 (defn other-component []
   (let [other-tracks (subscribe [:tracks-by-category :other])]
@@ -121,7 +121,7 @@
        :reagent-render
        (fn []
          [:div
-          [:audio.controls {:controls "controls"}
+          [:audio.controls {:class "hidden" :controls "controls"}
            [:source {:src      (if @playing-track (:url @playing-track))
                      :type     "audio/mpeg"
                      :controls "controls"}]]
@@ -135,8 +135,10 @@
    [:div.header
     [:h1 "alex silva music"]
     [track-player]]
+   [:hr]
    [menu]
    [panel :face-of-man face-of-man-component]
    [panel :other other-component]
    [panel :links links-component]
-   [panel :likes likes-component]])
+   [panel :likes likes-component]
+   [:img.alex {:src  "/assets/alex-studio.png"}]])
