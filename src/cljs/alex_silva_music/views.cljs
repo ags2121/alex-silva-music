@@ -59,7 +59,7 @@
          [:li.collection-container [collection collection-id]])])))
 
 (defn other-component []
-  (let [other-tracks (subscribe [:tracks-by-category :other])]
+  (let [other-tracks (subscribe [:tracks-by-category :music-school-music])]
     (fn []
       [:ul.other
        (for [track-data @other-tracks]
@@ -138,7 +138,7 @@
    [:hr]
    [menu]
    [panel :face-of-man face-of-man-component]
-   [panel :other other-component]
+   [panel :music-school-music other-component]
    [panel :links links-component]
    [panel :likes likes-component]
    [:img.alex {:src  "/assets/alex-studio.png"}]])

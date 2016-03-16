@@ -58,34 +58,34 @@
                                     :future-half {:collection :face-of-man
                                                   :category   :face-of-man}
 
-                                    :la-chat-roulette {:category  :other
+                                    :la-chat-roulette {:category  :music-school-music
                                                        :year      2010
                                                        :performer :face-of-man-quintet
                                                        :credits   face-of-man-quintet-creds
                                                        :liked     true}
 
                                     :mr-silvas-magnet-school {:display-name "Mr Silva's Magnet School"
-                                                              :category     :other
+                                                              :category     :music-school-music
                                                               :year         2010
                                                               :group        :face-of-man-quintet
                                                               :credits      face-of-man-quintet-creds}
 
-                                    :i-dalliance {:category :other
+                                    :i-dalliance {:category :music-school-music
                                                   :year     2013
                                                   :credits  {"Alex Silva" ["programming"]}
                                                   :liked    true}
 
-                                    :ii-convergence {:category :other
+                                    :ii-convergence {:category :music-school-music
                                                      :year     2013
                                                      :credits  {"Alex Silva" ["programming"]}}
 
-                                    :antisense {:category :other
+                                    :antisense {:category :music-school-music
                                                 :year     2011
                                                 :credits  (array-map "Yurie Mitsuhashi" ["violin"]
                                                                      "Isabel Gehweiler" ["cello"]
                                                                      "Joe Mohan" ["piano"])}
 
-                                    :cool-runnings {:category  :other
+                                    :cool-runnings {:category  :music-school-music
                                                     :year      2010
                                                     :performer :counter-induction
                                                     :credits   (array-map "Margaret Lancaster" ["flute"]
@@ -109,7 +109,7 @@
 (defn add-track-url [track-id track-data]
   (let [track-name (name track-id)
         [url sc-url score-url] (map #(str % track-name) [base-music-url base-sc-url base-score-url])
-        has-score? (= (-> track-data :category) :other)
+        has-score? (= (-> track-data :category) :music-school-music)
         track-urls (merge {:soundcloud sc-url
                            :url        (str url ".mp3")}
                           (if has-score?
@@ -128,4 +128,4 @@
   (add-track-urls default-db))
 
 (defn get-panels []
-  [:face-of-man :other :links :likes])
+  [:face-of-man :music-school-music :links :likes])
