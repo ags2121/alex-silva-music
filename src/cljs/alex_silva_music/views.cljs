@@ -1,7 +1,8 @@
 (ns alex-silva-music.views
   (:require [re-frame.core :refer [subscribe dispatch]]
             [clojure.string :as str :refer [replace capitalize]]
-            [reagent.core :as reagent :refer [dom-node]]))
+            [reagent.core :as reagent :refer [dom-node]]
+            [alex-silva-music.db :as db]))
 
 (defn capitalize-all [string]
   (str/join " " (map #(if (contains? #{"of" "i" "ii"} %) % (str/capitalize %)) (str/split string #" "))))
@@ -20,7 +21,7 @@
         active-track-id (subscribe [:active-track-id])
         is-active-track (= track-id @active-track-id)]
     (fn []
-      [:div.track
+      [:a.track
        [:span.track-name {:class    (if is-active-track "selected")
                :on-click #(dispatch [:set-playing-track track-id])}
         (if (nil? display-name) (id->name track-id) display-name)]
@@ -41,7 +42,7 @@
        [:ul {:class (if (= collection-id @active-collection-id) "selected" "hidden")}
         (for [track-data (:tracks @collection)]
           ^{:key (key track-data)}
-          [:li [track track-data]])]]
+          [:li.track-container [track track-data]])]]
       )))
 
 (defn panel [panel-id panel-body]
@@ -49,6 +50,7 @@
     (fn []
       [:div.panel {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
        [panel-body]])))
+
 
 (defn face-of-man-component []
   (let [collections (subscribe [:collections])]
@@ -59,7 +61,7 @@
          [:li.collection-container [collection collection-id]])])))
 
 (defn other-component []
-  (let [other-tracks (subscribe [:tracks-by-category :other])]
+  (let [other-tracks (subscribe [:tracks-by-category :school-music])]
     (fn []
       [:ul.other
        (for [track-data @other-tracks]
@@ -88,21 +90,21 @@
          [:li [track track-data]])]
       )))
 
-(defn menu []
-  (let [menu-data (subscribe [:menu-data])]
-    (fn []
-      (let [[liked-tracks-count panels active-panel-id] @menu-data]
-        [:ul.panels
-         (for [panel-id panels]
-           ^{:key panel-id}
-           [:li
-            [:a {:class (if (= panel-id active-panel-id) "selected")
-                 :href  (str "#/" (name panel-id))}
-             (id->name panel-id)
-             (if (= panel-id :likes)
-               (str " (" liked-tracks-count ")"))]
-            ])
-         ]))))
+;(defn menu []
+;  (let [menu-data (subscribe [:menu-data])]
+;    (fn []
+;      (let [[liked-tracks-count active-panel-id] @menu-data]
+;        [:ul.panels
+;         (for [panel-id panels]
+;           ^{:key panel-id}
+;           [:li
+;            [:a {:class (if (= panel-id active-panel-id) "selected")
+;                 :href  (str "#/" (name panel-id))}
+;             (id->name panel-id)
+;             (if (= panel-id :favorites)
+;               (str " (" liked-tracks-count ")"))]
+;            ])
+;         ]))))
 
 (defn track-player []
   (let [playing-track (subscribe [:playing-track])
@@ -130,15 +132,37 @@
            [:span.italic (if @playing-track (str "\"" (id->name (:track-id @playing-track)) "\""))]
            ]])})))
 
+(defn component
+  [component-id component-type]
+  (let [current-path (subscribe [:path])
+        new-path (subscribe [:get-path component-id component-type])]
+    (fn []
+      (.log js/console (str @current-path " current"))
+      (.log js/console (str @new-path " new"))
+      [:li
+       [:a
+        {:class (if (contains? @current-path component-id) "selected")
+            :href  @new-path}
+        (id->name component-id)
+        ]]
+      )))
+
+(defn components [component-ids component-type]
+  [:ul {:class component-type}
+   (for [component-id component-ids]
+     ^{:key component-id}
+     [component component-id component-type])])
+
 (defn main-panel []
   [:div
    [:div.header
     [:h1 "alex silva music"]
     [track-player]]
    [:hr]
-   [menu]
-   [panel :face-of-man face-of-man-component]
-   [panel :other other-component]
+   [components db/panels :panel]
+   [components db/projects :project]
+   ;[panel :projects face-of-man-component]
+   [panel :bio other-component]
    [panel :links links-component]
-   [panel :likes likes-component]
+   [panel :favorites likes-component]
    [:img.alex {:src  "/assets/alex-studio.png"}]])

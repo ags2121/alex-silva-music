@@ -47,17 +47,13 @@ ul {
     margin: 0 29%;
 }
 
-.collections {
+ul.collection, ul.project {
     display: flex;
     display: -webkit-flex;
     flex-wrap: wrap;
     -webkit-flex-wrap: wrap;
     justify-content: center;
     -webkit-justify-content: center;
-}
-
-.collections li {
-    /*display: inline;*/
 }
 
 .collection-container {
@@ -158,29 +154,34 @@ input[type="checkbox"] {
     display: none;
 }
 
-.panels {
+ul.panel {
+    margin-bottom: 0;
     font-size: 2.5rem;
-    text-align: center;
+    display: flex;
+    display: -webkit-flex;
+    flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+    justify-content: center;
 }
 
-.panels li {
-    display: inline;
+.panel li {
+    margin-right: 0.2em;
+    margin-bottom: 0.8em;
 }
 
-.panels li a {
+li a {
     color: inherit;
-    margin-right: 1%;
     padding: 3px 7px;
     text-decoration: none;
     border: 2px solid transparent;
     border-radius: 0.2em;
 }
 
-.panels li a.selected,
-.panels li a:hover {
+li a.selected,
+li a:hover {
     border-color: rgba(175, 47, 47, 0.1);
 }
 
-.panels li a.selected {
+li a.selected {
     border-color: rgba(175, 47, 47, 0.2);
 }

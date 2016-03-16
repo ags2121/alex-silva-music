@@ -7,6 +7,34 @@
  (fn  [_ _]
    (db/get-default-db)))
 
+;(register-handler
+;  :set-path
+;  (path :path)
+;  (fn [current-path [_ new-path-element]]
+;    (case new-path-element
+;      (contains? db/panels new-path-element)
+;      (array-map :panel new-path-element)
+;
+;      (contains? db/projects new-path-element)
+;      (-> (assoc current-path :project new-path-element)
+;          (assoc :collection nil)
+;          (assoc :track nil))
+;
+;      (contains? db/collections-ids new-path-element)
+;      (-> (assoc current-path :collection new-path-element)
+;          (assoc :track nil))
+;
+;      (contains? db/track-ids new-path-element)
+;      (-> (assoc current-path :track new-path-element)))))
+
+(register-handler
+  :set-complete-path
+  (path :path)
+  (fn [_ [_ new-path]]
+    (.log js/console "new path")
+    (.log js/console new-path)
+    new-path))
+
 (register-handler
   :set-active-panel
   (path :active-panel)

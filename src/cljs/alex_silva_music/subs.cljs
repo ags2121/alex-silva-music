@@ -10,6 +10,23 @@
   [db]
   (filter #(-> % val :liked) (:tracks db)))
 
+(defn get-new-path [current-path new-path-element new-path-element-type]
+  (case new-path-element-type
+    :panel
+    (array-map :panel new-path-element)
+
+    :project
+    (-> (assoc current-path :project new-path-element)
+        (assoc :collection nil)
+        (assoc :track nil))
+
+    :collection
+    (-> (assoc current-path :collection new-path-element)
+        (assoc :track nil))
+
+    :track
+    (-> (assoc current-path :track new-path-element))))
+
 ;; -- Subscription handlers and registration  ---------------------------------
 
 (re-frame/register-sub
@@ -18,9 +35,27 @@
     (reaction (map key (:collections @db)))))
 
 (re-frame/register-sub
+  :path
+  (fn [db _]
+    (reaction (:path @db))))
+
+(re-frame/register-sub
+  :get-path
+  (fn [db [_ new-path-element new-path-element-type]]
+    (.log js/console new-path-element-type)
+    (let [current-path (:path @db)
+          new-path (get-new-path current-path new-path-element new-path-element-type)]
+      (.log js/console new-path)
+      (.log js/console (str (conj (vals new-path) :#)))
+      (reaction
+        (reduce
+          #(str (name %1) "/" (name %2))
+          (conj (remove nil? (vals new-path)) :#))))))
+
+(re-frame/register-sub
   :tracks-by-category
   (fn [db [_ category]]
-    (reaction (filter #(= (-> % val :category) category) (:tracks @db)))))
+    (reaction (filter #(= (-> % val :project) category) (:tracks @db)))))
 
 (re-frame/register-sub
   :collection
@@ -70,4 +105,6 @@
   (fn [db _]
     (let [liked-tracks-count (reaction (count (liked-tracks @db)))
           active-panel-id (reaction (:active-panel @db))]
-      (reaction [@liked-tracks-count (db/get-panels) @active-panel-id]))))
+      (reaction [@liked-tracks-count @active-panel-id]))))
+
+
