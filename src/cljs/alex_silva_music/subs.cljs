@@ -69,5 +69,6 @@
   :menu-data
   (fn [db _]
     (let [liked-tracks-count (reaction (count (liked-tracks @db)))
-          active-panel-id (reaction (:active-panel @db))]
-      (reaction [@liked-tracks-count (db/get-panels) @active-panel-id]))))
+          ;active-panel-id (reaction (:active-panel @db))
+          ]
+      (reaction liked-tracks-count))))

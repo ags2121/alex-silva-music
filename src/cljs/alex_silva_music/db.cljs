@@ -101,7 +101,7 @@
                                     :facebook "https://www.facebook.com/faceofmanband/"
                                     :twitter "https://twitter.com/faceofmanband"
                                     :itunes "https://itunes.apple.com/us/artist/face-of-man/id441404508")
-   :active-panel         :face-of-man
+   :active-panel         nil
    :active-collection-id nil
    :active-track-id      nil
    })
@@ -127,5 +127,5 @@
 (defn get-default-db []
   (add-track-urls default-db))
 
-(defn get-panels []
-  [:face-of-man :music-school-music :links :likes])
+(def panels
+  [:projects :music-school-music :links :favorites])

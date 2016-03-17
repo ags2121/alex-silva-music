@@ -1,7 +1,8 @@
 (ns alex-silva-music.views
   (:require [re-frame.core :refer [subscribe dispatch]]
             [clojure.string :as str :refer [replace capitalize]]
-            [reagent.core :as reagent :refer [dom-node]]))
+            [reagent.core :as reagent :refer [dom-node]]
+            [alex-silva-music.db :as db]))
 
 (defn capitalize-all [string]
   (str/join " " (map #(if (contains? #{"of" "i" "ii"} %) % (str/capitalize %)) (str/split string #" "))))
@@ -58,7 +59,7 @@
          ^{:key collection-id}
          [:li.collection-container [collection collection-id]])])))
 
-(defn other-component []
+(defn music-school-music-component []
   (let [other-tracks (subscribe [:tracks-by-category :music-school-music])]
     (fn []
       [:ul.other
@@ -79,7 +80,7 @@
              [:img {:src (str "/assets/" link-name ".png") :alt link-name :height 90 :width 90}])
            ]])])))
 
-(defn likes-component []
+(defn favorites-component []
   (let [liked-tracks (subscribe [:liked-tracks])]
     (fn []
       [:ul.likes
@@ -88,21 +89,22 @@
          [:li [track track-data]])]
       )))
 
-(defn menu []
-  (let [menu-data (subscribe [:menu-data])]
+(defn menu [panels]
+  (let [active-panel (subscribe [:active-panel])
+        liked-tracks (subscribe [:liked-tracks])]
     (fn []
-      (let [[liked-tracks-count panels active-panel-id] @menu-data]
-        [:ul.panels
-         (for [panel-id panels]
-           ^{:key panel-id}
-           [:li
-            [:a {:class (if (= panel-id active-panel-id) "selected")
-                 :href  (str "#/" (name panel-id))}
-             (id->name panel-id)
-             (if (= panel-id :likes)
-               (str " (" liked-tracks-count ")"))]
-            ])
-         ]))))
+      ;(.log js/console @menu-data)
+      [:ul.panels
+       (doall (for [panel-id panels]
+          ^{:key panel-id}
+          [:li
+           [:a {:class (if (= panel-id @active-panel) "selected")
+                :href  (str "#/" (name panel-id))}
+            (id->name panel-id)
+            (if (= panel-id :favorites)
+              (str " (" (count @liked-tracks) ")"))]
+           ]))
+       ])))
 
 (defn track-player []
   (let [playing-track (subscribe [:playing-track])
@@ -136,9 +138,9 @@
     [:h1 "alex silva music"]
     [track-player]]
    [:hr]
-   [menu]
-   [panel :face-of-man face-of-man-component]
-   [panel :music-school-music other-component]
+   [menu db/panels]
+   [panel :projects face-of-man-component]
+   [panel :bio music-school-music-component]
    [panel :links links-component]
-   [panel :likes likes-component]
+   [panel :favorites favorites-component]
    [:img.alex {:src  "/assets/alex-studio.png"}]])
