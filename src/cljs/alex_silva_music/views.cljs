@@ -89,15 +89,22 @@
          [:li [track track-data]])]
       )))
 
-(defn projects []
+(defn projects [projects-ids]
+  (let [active-project-id (subscribe [:active-project-id])]
+    (fn []
+      [:ul.projects
+       (doall (for [project-id projects-ids]
+                ^{:key project-id}
+                [:li
+                 [:a {:class (if (= project-id @active-project-id) "selected")
+                      :href  (str "#/projects/" (name project-id))}
+                  (id->name project-id)]]
+                ))])))
 
-  )
-
-(defn menu [panel-ids]
+(defn panels [panel-ids]
   (let [active-panel (subscribe [:active-panel])
         liked-tracks (subscribe [:liked-tracks])]
     (fn []
-      ;(.log js/console @menu-data)
       [:ul.panels
        (doall (for [panel-id panel-ids]
           ^{:key panel-id}
@@ -107,8 +114,7 @@
             (id->name panel-id)
             (if (= panel-id :favorites)
               (str " (" (count @liked-tracks) ")"))]
-           ]))
-       ])))
+           ]))])))
 
 (defn track-player []
   (let [playing-track (subscribe [:playing-track])
@@ -142,8 +148,8 @@
     [:h1 "alex silva music"]
     [track-player]]
    [:hr]
-   [menu db/panels]
-   [panel :projects face-of-man-component]
+   [panels db/panels]
+   [panel :projects (projects db/projects)]
    [panel :bio music-school-music-component]
    [panel :links links-component]
    [panel :favorites favorites-component]

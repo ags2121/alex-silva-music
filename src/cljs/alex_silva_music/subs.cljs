@@ -36,6 +36,11 @@
     (reaction (:active-panel @db))))
 
 (re-frame/register-sub
+  :active-project-id
+  (fn [db _]
+    (reaction (:active-project-id @db))))
+
+(re-frame/register-sub
   :active-collection-id
   (fn [db _]
     (reaction (:active-collection-id @db))))

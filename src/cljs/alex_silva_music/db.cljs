@@ -5,9 +5,6 @@
 (def base-music-url (str base-url "music/"))
 (def base-sc-url "https://soundcloud.com/faceofman/")
 
-(defn get-track-link [track-id]
-  (str base-music-url track-id ".mp3"))
-
 (def face-of-man-quintet-creds
   (array-map "Nick Bazzano" ["Alto Sax"]
              "Daro Behroozi" ["Bass Clarinet"]
@@ -102,6 +99,7 @@
                                     :twitter "https://twitter.com/faceofmanband"
                                     :itunes "https://itunes.apple.com/us/artist/face-of-man/id441404508")
    :active-panel         nil
+   :active-project       nil
    :active-collection-id nil
    :active-track-id      nil
    })
@@ -129,3 +127,6 @@
 
 (def panels
   [:projects :music-school-music :links :favorites])
+
+(def projects
+  (distinct (map #(-> % val :project) (-> default-db :tracks))))
