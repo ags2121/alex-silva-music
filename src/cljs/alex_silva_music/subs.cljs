@@ -18,9 +18,9 @@
     (reaction (map key (:collections @db)))))
 
 (re-frame/register-sub
-  :tracks-by-category
-  (fn [db [_ category]]
-    (reaction (filter #(= (-> % val :category) category) (:tracks @db)))))
+  :tracks-by-project
+  (fn [db [_ project]]
+    (reaction (filter #(= (-> % val :project) project) (:tracks @db)))))
 
 (re-frame/register-sub
   :collection

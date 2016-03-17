@@ -60,7 +60,7 @@
          [:li.collection-container [collection collection-id]])])))
 
 (defn music-school-music-component []
-  (let [other-tracks (subscribe [:tracks-by-category :music-school-music])]
+  (let [other-tracks (subscribe [:tracks-by-project :music-school-music])]
     (fn []
       [:ul.other
        (for [track-data @other-tracks]
@@ -89,13 +89,17 @@
          [:li [track track-data]])]
       )))
 
-(defn menu [panels]
+(defn projects []
+
+  )
+
+(defn menu [panel-ids]
   (let [active-panel (subscribe [:active-panel])
         liked-tracks (subscribe [:liked-tracks])]
     (fn []
       ;(.log js/console @menu-data)
       [:ul.panels
-       (doall (for [panel-id panels]
+       (doall (for [panel-id panel-ids]
           ^{:key panel-id}
           [:li
            [:a {:class (if (= panel-id @active-panel) "selected")

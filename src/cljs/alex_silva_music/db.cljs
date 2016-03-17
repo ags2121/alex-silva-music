@@ -32,60 +32,60 @@
                                                                       "Jojo Samuels" ["lady vocals on \"Future Half\""])})
 
    :tracks               (array-map :planes {:collection :recent-work
-                                             :category   :face-of-man
+                                             :project   :face-of-man
                                              :liked      true}
 
                                     :bouquet {:collection :recent-work
-                                              :category   :face-of-man}
+                                              :project   :face-of-man}
 
                                     :like-devils-fly {:collection :at-the-pheelharmonic
-                                                      :category   :face-of-man
+                                                      :project   :face-of-man
                                                       :liked      true}
 
                                     :altiloquence {:collection :at-the-pheelharmonic
-                                                   :category   :face-of-man}
+                                                   :project   :face-of-man}
 
                                     :fast-car {:collection :at-the-pheelharmonic
-                                               :category   :face-of-man}
+                                               :project   :face-of-man}
 
                                     :ethnopoetics {:collection :face-of-man
-                                                   :category   :face-of-man
+                                                   :project   :face-of-man
                                                    :liked      true}
 
                                     :a-sharper-image {:collection :face-of-man
-                                                      :category   :face-of-man}
+                                                      :project   :face-of-man}
 
                                     :future-half {:collection :face-of-man
-                                                  :category   :face-of-man}
+                                                  :project   :face-of-man}
 
-                                    :la-chat-roulette {:category  :music-school-music
+                                    :la-chat-roulette {:project  :music-school-music
                                                        :year      2010
                                                        :performer :face-of-man-quintet
                                                        :credits   face-of-man-quintet-creds
                                                        :liked     true}
 
                                     :mr-silvas-magnet-school {:display-name "Mr Silva's Magnet School"
-                                                              :category     :music-school-music
+                                                              :project     :music-school-music
                                                               :year         2010
                                                               :group        :face-of-man-quintet
                                                               :credits      face-of-man-quintet-creds}
 
-                                    :i-dalliance {:category :music-school-music
+                                    :i-dalliance {:project :music-school-music
                                                   :year     2013
                                                   :credits  {"Alex Silva" ["programming"]}
                                                   :liked    true}
 
-                                    :ii-convergence {:category :music-school-music
+                                    :ii-convergence {:project :music-school-music
                                                      :year     2013
                                                      :credits  {"Alex Silva" ["programming"]}}
 
-                                    :antisense {:category :music-school-music
+                                    :antisense {:project :music-school-music
                                                 :year     2011
                                                 :credits  (array-map "Yurie Mitsuhashi" ["violin"]
                                                                      "Isabel Gehweiler" ["cello"]
                                                                      "Joe Mohan" ["piano"])}
 
-                                    :cool-runnings {:category  :music-school-music
+                                    :cool-runnings {:project  :music-school-music
                                                     :year      2010
                                                     :performer :counter-induction
                                                     :credits   (array-map "Margaret Lancaster" ["flute"]
@@ -109,7 +109,7 @@
 (defn add-track-url [track-id track-data]
   (let [track-name (name track-id)
         [url sc-url score-url] (map #(str % track-name) [base-music-url base-sc-url base-score-url])
-        has-score? (= (-> track-data :category) :music-school-music)
+        has-score? (= (-> track-data :project) :music-school-music)
         track-urls (merge {:soundcloud sc-url
                            :url        (str url ".mp3")}
                           (if has-score?
