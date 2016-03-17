@@ -34,10 +34,6 @@ body {
     font-weight: 300;
 }
 
-.panel {
-    margin-left: 0.5em;
-}
-
 .music-school-music, .likes, .links {
     display: table;
     margin: 0 29%;
@@ -55,22 +51,16 @@ body {
     /*display: inline;*/
 }
 
-.collection-container {
-    float: left;
-}
-
 .italic {
     font-style: italic;
 }
 
 .not-liked {
     color: white;
-    float: right;
 }
 
 .liked {
     color: black;
-    float: right;
 }
 
 .links {
@@ -79,6 +69,7 @@ body {
 
 img {
     border-radius: 0.3em;
+    vertical-align: middle;
 }
 
 .alex {
@@ -95,21 +86,29 @@ li.link {
     margin-right: 0.5em;
 }
 
-.track {
-    min-width: 364px;
-}
-
 .track > * {
-    margin-right: 0.5em;
+    /*margin-right: 0.5em;*/
 }
 
 .icon {
-    vertical-align: middle;
-    float: right;
+    display: inline;
 }
 
-.collection-name, .track-name, .liked, .not-liked {
+.liked, .not-liked, .soundcloud, .score {
+    position: absolute;
+}
+
+.liked, .not-liked {
+    right: 2em;
     cursor: pointer;
+}
+
+.soundcloud {
+    right: 1em
+}
+
+.score {
+    right: 0;
 }
 
 hr {
@@ -153,6 +152,7 @@ input[type="checkbox"] {
     font-size: 2.5rem;
     text-align: center;
     position: relative;
+    margin-bottom: 1em;
 }
 
 .panels li {
@@ -174,11 +174,26 @@ ul {
 
 .tracks {
     flex-direction: column;
+    min-width: 280px;
+    position: absolute;
+    left: 50%;
+    margin-left: -140px;
+    margin-top: 1em;
 }
 
-li a {
+.track {
+    display: block;
+    height: 35px;
+}
+
+.track-name {
+    width: 100%;
+    float: left;
+    cursor: pointer;
+}
+
+li > a {
     color: inherit;
-    margin-right: 0.4em;
     padding: 3px 7px;
     text-decoration: none;
     border: 2px solid transparent;
@@ -192,6 +207,10 @@ li a:hover {
 
 li a.selected {
     border-color: rgba(175, 47, 47, 0.2);
+}
+
+.link a:hover {
+    border-color: transparent;
 }
 
 .bio {

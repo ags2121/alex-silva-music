@@ -11,25 +11,27 @@
   (-> id name (str/replace "-" " ") capitalize-all))
 
 (defn track-link [track-data link-key]
-  [:a {:class (str (name link-key) " icon") :href (-> track-data val link-key) :target "_blank"}
+  [:div {:class (str (name link-key) " icon") :href (-> track-data val link-key) :target "_blank"}
    [:img {:src (str "/assets/" (name link-key) ".png") :height 20 :width 20}]])
 
 (defn track [track-data]
   (let [track-id (key track-data)
         display-name (-> track-data val :display-name)
         is-liked (subscribe [:is-liked track-id])
-        active-track-id (subscribe [:active-track-id])
-        is-active-track (= track-id @active-track-id)]
+        playing-track (subscribe [:playing-track])]
     (fn []
-      [:div.track
-       [:span.track-name {:class    (if is-active-track "selected")
-               :on-click #(dispatch [:set-playing-track track-id])}
+      [:a.track {:class    (if (= track-id (:track-id @playing-track)) "selected")}
+       [:span.track-name {:on-click #(dispatch [:set-playing-track track-id])}
         (if (nil? display-name) (id->name track-id) display-name)]
-       (if (-> track-data val :score)
-         [track-link track-data :score])
-       [track-link track-data :soundcloud]
+
        [:span {:class    (if @is-liked "liked" "not-liked")
                :on-click #(dispatch [:set-track-liked track-id])} " ♥"]
+
+       [track-link track-data :soundcloud]
+
+       (if (-> track-data val :score)
+         [track-link track-data :score] )
+
        ])))
 
 (defn collection [collection-id]
@@ -52,13 +54,26 @@
        [panel-body]])))
 
 (defn face-of-man-component [collection-ids]
-  (let [active-project-id (subscribe [:active-project-id])]
+  (let [active-project-id (subscribe [:active-project-id])
+        active-collection-id (subscribe [:active-collection-id])]
     (fn []
-      (.log js/console @active-project-id)
       [:ul.collections {:class (if (= :face-of-man @active-project-id) "selected" "hidden")}
-       (for [collection-id collection-ids]
-         ^{:key collection-id}
-         [:li.collection-container [collection collection-id]])])))
+       (doall (for [collection-id collection-ids]
+          (let [collection-data (db/get-collection-data collection-id)]
+            [:li.collection {:key collection-id}
+
+            [:a {:class (if (= collection-id @active-collection-id) "selected")
+                 :href  (str "#/projects/face-of-man/" (name collection-id))}
+             ;(str (id->name collection-id) (if-not (nil? (:year @collection)) (str " (" (:year @collection) ")"))) ;todo: add year?
+             (id->name collection-id)
+             ]
+
+            [:ul.tracks {:class (if (= collection-id @active-collection-id) "selected" "hidden")}
+             (for [track-data (:tracks collection-data)]
+               ^{:key (key track-data)}
+               [:li [track track-data]])]
+
+            ])))])))
 
 (defn music-school-music-component []
   (let [other-tracks (subscribe [:tracks-by-project :music-school-music])]
@@ -102,7 +117,7 @@
                   (id->name project-id)]
                  (if (= project-id :face-of-man)
                    [face-of-man-component db/collections-ids]
-                   ;[music-school-music-component]
+                   ;[music-school-music-component] ;todo
                    )
                  ]
                 ))])))
@@ -156,7 +171,6 @@
    [:hr]
    [panels db/panels]
    [panel :projects (projects db/projects)]
-   ;[face-of-man-component db/collections-ids]
    [panel :bio (fn [] [:div.bio "Alex Silva is dope."])]
    [panel :links links-component]
    [panel :favorites favorites-component]

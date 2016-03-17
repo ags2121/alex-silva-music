@@ -35,7 +35,7 @@
 
                 ;:figwheel true
                 ;; Alternatively, you can configure a function to run every time figwheel reloads.
-                 :figwheel {:on-jsload "alex-silva-music.core/mount-root"}
+                ; :figwheel {:on-jsload "alex-silva-music.core/mount-root"}
 
 
                 :compiler {:main alex-silva-music.core
@@ -59,7 +59,7 @@
              ;; assets and API endpoints can all be accessed on the same host
              ;; and port. If you prefer a separate server process then take this
              ;; out and start the server with `lein run`.
-             :ring-handler user/http-handler
+             :ring-handler alex-silva-music.server/http-handler
 
              ;; Start an nREPL server into the running figwheel process. We
              ;; don't do this, instead we do the opposite, running figwheel from
@@ -107,4 +107,28 @@
                            {:source-paths ^:replace ["src/cljs"]
                             :compiler
                                           {:optimizations :advanced
-                                           :pretty-print false}}}}}})
+                                           :pretty-print false}}}}}}
+
+  ;:cljsbuild {:builds [{:id           "dev"
+  ;                      :source-paths ["src/cljs"]
+  ;                      :figwheel     {:on-jsload "alex-silva-music.core/mount-root"}
+  ;                      :compiler     {:main                 alex-silva-music.core
+  ;                                     :output-to            "resources/public/js/compiled/app.js"
+  ;                                     :output-dir           "resources/public/js/compiled/out"
+  ;                                     :asset-path           "js/compiled/out"
+  ;                                     :source-map-timestamp true}}
+  ;
+  ;                     {:id           "test"
+  ;                      :source-paths ["src/cljs" "test/cljs"]
+  ;                      :compiler     {:output-to     "resources/public/js/compiled/test.js"
+  ;                                     :main          alex-silva-music.runner
+  ;                                     :optimizations :none}}
+  ;
+  ;                     {:id           "min"
+  ;                      :source-paths ["src/cljs"]
+  ;                      :compiler     {:main            alex-silva-music.core
+  ;                                     :output-to       "resources/public/js/compiled/app.js"
+  ;                                     :optimizations   :advanced
+  ;                                     :closure-defines {goog.DEBUG false}
+  ;                                     :pretty-print    false}}]}
+  )

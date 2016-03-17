@@ -12,7 +12,7 @@
              "Charlie Hack" ["Double Bass"]
              "Jesse Chevan" ["Drums"]))
 
-(def default-db
+(def base-db
   {:collections          (array-map :recent-work {:credits [{"Alex Silva" ["vocals" "guitar"]}]}
 
                                     :at-the-pheelharmonic {:year    2012
@@ -29,60 +29,60 @@
                                                                       "Jojo Samuels" ["lady vocals on \"Future Half\""])})
 
    :tracks               (array-map :planes {:collection :recent-work
-                                             :project   :face-of-man
+                                             :project    :face-of-man
                                              :liked      true}
 
                                     :bouquet {:collection :recent-work
-                                              :project   :face-of-man}
+                                              :project    :face-of-man}
 
                                     :like-devils-fly {:collection :at-the-pheelharmonic
-                                                      :project   :face-of-man
+                                                      :project    :face-of-man
                                                       :liked      true}
 
                                     :altiloquence {:collection :at-the-pheelharmonic
-                                                   :project   :face-of-man}
+                                                   :project    :face-of-man}
 
                                     :fast-car {:collection :at-the-pheelharmonic
-                                               :project   :face-of-man}
+                                               :project    :face-of-man}
 
                                     :ethnopoetics {:collection :face-of-man
-                                                   :project   :face-of-man
+                                                   :project    :face-of-man
                                                    :liked      true}
 
                                     :a-sharper-image {:collection :face-of-man
-                                                      :project   :face-of-man}
+                                                      :project    :face-of-man}
 
                                     :future-half {:collection :face-of-man
-                                                  :project   :face-of-man}
+                                                  :project    :face-of-man}
 
-                                    :la-chat-roulette {:project  :music-school-music
+                                    :la-chat-roulette {:project   :music-school-music
                                                        :year      2010
                                                        :performer :face-of-man-quintet
                                                        :credits   face-of-man-quintet-creds
                                                        :liked     true}
 
                                     :mr-silvas-magnet-school {:display-name "Mr Silva's Magnet School"
-                                                              :project     :music-school-music
+                                                              :project      :music-school-music
                                                               :year         2010
                                                               :group        :face-of-man-quintet
                                                               :credits      face-of-man-quintet-creds}
 
                                     :i-dalliance {:project :music-school-music
-                                                  :year     2013
-                                                  :credits  {"Alex Silva" ["programming"]}
-                                                  :liked    true}
+                                                  :year    2013
+                                                  :credits {"Alex Silva" ["programming"]}
+                                                  :liked   true}
 
                                     :ii-convergence {:project :music-school-music
-                                                     :year     2013
-                                                     :credits  {"Alex Silva" ["programming"]}}
+                                                     :year    2013
+                                                     :credits {"Alex Silva" ["programming"]}}
 
                                     :antisense {:project :music-school-music
-                                                :year     2011
-                                                :credits  (array-map "Yurie Mitsuhashi" ["violin"]
-                                                                     "Isabel Gehweiler" ["cello"]
-                                                                     "Joe Mohan" ["piano"])}
+                                                :year    2011
+                                                :credits (array-map "Yurie Mitsuhashi" ["violin"]
+                                                                    "Isabel Gehweiler" ["cello"]
+                                                                    "Joe Mohan" ["piano"])}
 
-                                    :cool-runnings {:project  :music-school-music
+                                    :cool-runnings {:project   :music-school-music
                                                     :year      2010
                                                     :performer :counter-induction
                                                     :credits   (array-map "Margaret Lancaster" ["flute"]
@@ -99,7 +99,7 @@
                                     :twitter "https://twitter.com/faceofmanband"
                                     :itunes "https://itunes.apple.com/us/artist/face-of-man/id441404508")
    :active-panel         nil
-   :active-project-id       nil
+   :active-project-id    nil
    :active-collection-id nil
    :active-track-id      nil
    })
@@ -120,20 +120,22 @@
     (fn [d track-id]
       (update-in d [:tracks track-id] #(add-track-url track-id %)))
     db
-    (keys (:tracks default-db))))
+    (keys (:tracks base-db))))
 
-(defn get-default-db []
-  (add-track-urls default-db))
+(def default-db
+  (add-track-urls base-db))
+
+(defn get-collection-data [collection-id]
+  (let [collection-data (collection-id (:collections default-db))
+        tracks-for-collection (into [] (filter #(= (-> % val :collection) collection-id) (:tracks default-db)))
+        collection-data-with-tracks (assoc collection-data :tracks tracks-for-collection)]
+    collection-data-with-tracks))
 
 (def panels
   [:projects :bio :links :favorites])
 
 (def projects
-  (distinct (map #(-> % val :project) (-> default-db :tracks))))
-
-(defn is-project? [project]
-  (.log js/console "asfasd")
-  (contains? projects project))
+  (distinct (map #(-> % val :project) (-> base-db :tracks))))
 
 (def collections-ids
-  (-> default-db :collections keys))
+  (-> base-db :collections keys))

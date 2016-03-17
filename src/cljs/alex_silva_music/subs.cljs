@@ -68,11 +68,3 @@
   :is-liked
   (fn [db [_ track-id]]
     (reaction (-> @db :tracks track-id :liked))))
-
-(re-frame/register-sub
-  :menu-data
-  (fn [db _]
-    (let [liked-tracks-count (reaction (count (liked-tracks @db)))
-          ;active-panel-id (reaction (:active-panel @db))
-          ]
-      (reaction liked-tracks-count))))

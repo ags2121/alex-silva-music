@@ -4,8 +4,7 @@
   (:require [secretary.core :as secretary]
             [goog.events :as events]
             [goog.history.EventType :as EventType]
-            [re-frame.core :refer [dispatch]]
-            [alex-silva-music.db :as db]))
+            [re-frame.core :refer [dispatch]]))
 
 (defn hook-browser-navigation! []
   (doto (History.)
@@ -23,6 +22,9 @@
 
   (defroute "/projects/:project" [project]
             (dispatch [:set-active-project (keyword project)]))
+
+  (defroute "/projects/face-of-man/:collection" [collection]
+            (dispatch [:set-active-collection (keyword collection)]))
 
   (defroute "/favorites/:track" [track]
             (dispatch [:set-active-track (keyword track)]))

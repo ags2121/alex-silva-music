@@ -3,9 +3,9 @@
               [alex-silva-music.db :as db]))
 
 (register-handler
- :initialize-db
- (fn  [_ _]
-   (db/get-default-db)))
+  :initialize-db
+  (fn  [_ _]
+    db/default-db))
 
 (register-handler
   :set-active-panel
@@ -51,6 +51,6 @@
                                                  :pause
                                                  :play)
                                         :load? false)
-      (let [track-url (-> (db/get-default-db) :tracks new-playing-track-id :url)
+      (let [track-url (-> db/default-db :tracks new-playing-track-id :url)
             state (if new-state new-state :play)]
         {:track-id new-playing-track-id :url track-url :state state :load? true}))))
