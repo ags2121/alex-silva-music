@@ -1,7 +1,6 @@
 (ns alex-silva-music.subs
   (:require-macros [reagent.ratom :refer [reaction]])
-  (:require [re-frame.core :as re-frame]
-            [alex-silva-music.db :as db]))
+  (:require [re-frame.core :as re-frame]))
 
 ;; -- Helpers -----------------------------------------------------------------
 

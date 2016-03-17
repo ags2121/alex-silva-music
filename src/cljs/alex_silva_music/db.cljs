@@ -126,7 +126,7 @@
   (add-track-urls default-db))
 
 (def panels
-  [:projects :music-school-music :links :favorites])
+  [:projects :bio :links :favorites])
 
 (def projects
   (distinct (map #(-> % val :project) (-> default-db :tracks))))

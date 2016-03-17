@@ -152,7 +152,7 @@
    [panels db/panels]
    [panel :projects (projects db/projects)]
    [face-of-man-component db/collections-ids]
-   [panel :bio music-school-music-component]
+   [panel :bio (fn [] [:div.bio "Alex Silva is dope."])]
    [panel :links links-component]
    [panel :favorites favorites-component]
    ;[:img.alex {:src  "/assets/alex-studio.png"}]

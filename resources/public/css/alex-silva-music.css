@@ -189,3 +189,7 @@ li a:hover {
 li a.selected {
     border-color: rgba(175, 47, 47, 0.2);
 }
+
+.bio {
+    text-align: center;
+}
