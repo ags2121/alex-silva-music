@@ -51,11 +51,12 @@
       [:div.panel {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
        [panel-body]])))
 
-(defn face-of-man-component []
-  (let [collections (subscribe [:collections])]
+(defn face-of-man-component [collection-ids]
+  (let [active-project-id (subscribe [:active-project-id])]
     (fn []
-      [:ul.collections
-       (for [collection-id @collections]
+      (.log js/console @active-project-id)
+      [:ul.collections {:class (if (= :face-of-man @active-project-id) "selected" "hidden")}
+       (for [collection-id collection-ids]
          ^{:key collection-id}
          [:li.collection-container [collection collection-id]])])))
 
@@ -150,7 +151,10 @@
    [:hr]
    [panels db/panels]
    [panel :projects (projects db/projects)]
+   [face-of-man-component db/collections-ids]
    [panel :bio music-school-music-component]
    [panel :links links-component]
    [panel :favorites favorites-component]
-   [:img.alex {:src  "/assets/alex-studio.png"}]])
+   ;[:img.alex {:src  "/assets/alex-studio.png"}]
+   ]
+  )

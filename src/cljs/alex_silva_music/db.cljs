@@ -99,7 +99,7 @@
                                     :twitter "https://twitter.com/faceofmanband"
                                     :itunes "https://itunes.apple.com/us/artist/face-of-man/id441404508")
    :active-panel         nil
-   :active-project       nil
+   :active-project-id       nil
    :active-collection-id nil
    :active-track-id      nil
    })
@@ -130,3 +130,10 @@
 
 (def projects
   (distinct (map #(-> % val :project) (-> default-db :tracks))))
+
+(defn is-project? [project]
+  (.log js/console "asfasd")
+  (contains? projects project))
+
+(def collections-ids
+  (-> default-db :collections keys))

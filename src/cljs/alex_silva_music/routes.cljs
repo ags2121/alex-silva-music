@@ -21,5 +21,11 @@
   (defroute "/:panel" [panel]
             (dispatch [:set-active-panel (keyword panel)]))
 
+  (defroute "/projects/:project" [project]
+            (dispatch [:set-active-project (keyword project)]))
+
+  (defroute "/favorites/:track" [track]
+            (dispatch [:set-active-track (keyword track)]))
+
   ;; --------------------
   (hook-browser-navigation!))

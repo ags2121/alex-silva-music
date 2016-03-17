@@ -14,6 +14,12 @@
     new-panel))
 
 (register-handler
+  :set-active-project
+  (path :active-project-id)
+  (fn [_ [_ new-project]]
+    new-project))
+
+(register-handler
   :set-active-collection
   (path :active-collection-id)
   (fn [current-collection-id [_ new-collection-id]]

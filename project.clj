@@ -107,28 +107,4 @@
                            {:source-paths ^:replace ["src/cljs"]
                             :compiler
                                           {:optimizations :advanced
-                                           :pretty-print false}}}}}}
-
-  ;:cljsbuild {:builds [{:id           "dev"
-  ;                      :source-paths ["src/cljs"]
-  ;                      :figwheel     {:on-jsload "alex-silva-music.core/mount-root"}
-  ;                      :compiler     {:main                 alex-silva-music.core
-  ;                                     :output-to            "resources/public/js/compiled/app.js"
-  ;                                     :output-dir           "resources/public/js/compiled/out"
-  ;                                     :asset-path           "js/compiled/out"
-  ;                                     :source-map-timestamp true}}
-  ;
-  ;                     {:id           "test"
-  ;                      :source-paths ["src/cljs" "test/cljs"]
-  ;                      :compiler     {:output-to     "resources/public/js/compiled/test.js"
-  ;                                     :main          alex-silva-music.runner
-  ;                                     :optimizations :none}}
-  ;
-  ;                     {:id           "min"
-  ;                      :source-paths ["src/cljs"]
-  ;                      :compiler     {:main            alex-silva-music.core
-  ;                                     :output-to       "resources/public/js/compiled/app.js"
-  ;                                     :optimizations   :advanced
-  ;                                     :closure-defines {goog.DEBUG false}
-  ;                                     :pretty-print    false}}]}
-  )
+                                           :pretty-print false}}}}}})
