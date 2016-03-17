@@ -39,7 +39,7 @@
       [:div.collection
        [:div.collection-name {:on-click #(dispatch [:set-active-collection collection-id])}
         (str (id->name collection-id) (if-not (nil? (:year @collection)) (str " (" (:year @collection) ")")))]
-       [:ul {:class (if (= collection-id @active-collection-id) "selected" "hidden")}
+       [:ul.tracks {:class (if (= collection-id @active-collection-id) "selected" "hidden")}
         (for [track-data (:tracks @collection)]
           ^{:key (key track-data)}
           [:li [track track-data]])]]

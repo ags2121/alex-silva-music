@@ -164,12 +164,17 @@ input[type="checkbox"] {
 }
 
 ul {
+    padding: 0;
     display: flex;
     display: -webkit-flex;
     flex-wrap: wrap;
     -webkit-flex-wrap: wrap;
     justify-content: center;
     -webkit-justify-content: center;
+}
+
+.tracks {
+    flex-direction: column;
 }
 
 li a {
