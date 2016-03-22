@@ -55,34 +55,34 @@
                                     :future-half {:collection :face-of-man
                                                   :project    :face-of-man}
 
-                                    :la-chat-roulette {:project   :music-school-music
+                                    :la-chat-roulette {:project   :compositions
                                                        :year      2010
                                                        :performer :face-of-man-quintet
                                                        :credits   face-of-man-quintet-creds
                                                        :liked     true}
 
                                     :mr-silvas-magnet-school {:display-name "Mr Silva's Magnet School"
-                                                              :project      :music-school-music
+                                                              :project      :compositions
                                                               :year         2010
                                                               :group        :face-of-man-quintet
                                                               :credits      face-of-man-quintet-creds}
 
-                                    :i-dalliance {:project :music-school-music
+                                    :i-dalliance {:project :compositions
                                                   :year    2013
                                                   :credits {"Alex Silva" ["programming"]}
                                                   :liked   true}
 
-                                    :ii-convergence {:project :music-school-music
+                                    :ii-convergence {:project :compositions
                                                      :year    2013
                                                      :credits {"Alex Silva" ["programming"]}}
 
-                                    :antisense {:project :music-school-music
+                                    :antisense {:project :compositions
                                                 :year    2011
                                                 :credits (array-map "Yurie Mitsuhashi" ["violin"]
                                                                     "Isabel Gehweiler" ["cello"]
                                                                     "Joe Mohan" ["piano"])}
 
-                                    :cool-runnings {:project   :music-school-music
+                                    :cool-runnings {:project   :compositions
                                                     :year      2010
                                                     :performer :counter-induction
                                                     :credits   (array-map "Margaret Lancaster" ["flute"]
@@ -107,7 +107,7 @@
 (defn add-track-url [track-id track-data]
   (let [track-name (name track-id)
         [url sc-url score-url] (map #(str % track-name) [base-music-url base-sc-url base-score-url])
-        has-score? (= (-> track-data :project) :music-school-music)
+        has-score? (= (-> track-data :project) :compositions)
         track-urls (merge {:soundcloud sc-url
                            :url        (str url ".mp3")}
                           (if has-score?

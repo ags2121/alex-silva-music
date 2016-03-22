@@ -76,7 +76,7 @@
             ])))])))
 
 (defn music-school-music-component []
-  (let [other-tracks (subscribe [:tracks-by-project :music-school-music])]
+  (let [other-tracks (subscribe [:tracks-by-project :compositions])]
     (fn []
       [:ul.other
        (for [track-data @other-tracks]
@@ -99,7 +99,7 @@
 (defn favorites-component []
   (let [liked-tracks (subscribe [:liked-tracks])]
     (fn []
-      [:ul.likes
+      [:ul.tracks
        (for [track-data @liked-tracks]
          ^{:key (key track-data)}
          [:li [track track-data]])]
@@ -123,8 +123,7 @@
                 ))])))
 
 (defn panels [panel-ids]
-  (let [active-panel (subscribe [:active-panel])
-        liked-tracks (subscribe [:liked-tracks])]
+  (let [active-panel (subscribe [:active-panel])]
     (fn []
       [:ul.panels
        (doall (for [panel-id panel-ids]
@@ -132,9 +131,7 @@
           [:li
            [:a {:class (if (= panel-id @active-panel) "selected")
                 :href  (str "#/" (name panel-id))}
-            (id->name panel-id)
-            (if (= panel-id :favorites)
-              (str " (" (count @liked-tracks) ")"))]
+            (id->name panel-id)]                            ;; todo: highlight favorites tab when track like is toggled
            ]))])))
 
 (defn track-player []
