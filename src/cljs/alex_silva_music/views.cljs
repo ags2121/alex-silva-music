@@ -171,6 +171,6 @@
    [panel :bio (fn [] [:div.bio "Alex Silva is dope."])]
    [panel :links links-component]
    [panel :favorites favorites-component]
-   ;[:img.alex {:src  "/assets/alex-studio.png"}]
+   [:img.alex {:src  "/assets/alex-studio.png"}]
    ]
   )

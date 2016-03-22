@@ -79,10 +79,11 @@ img {
 .alex {
     width: 10em;
     display: block;
-    bottom: 0;
-    position: fixed;
+    top: 25em;
+    position: absolute;
     left: 50%;
     margin-left: -5em;
+    margin-bottom: 1em;
 }
 
 li.link {
