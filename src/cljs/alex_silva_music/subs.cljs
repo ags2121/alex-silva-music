@@ -68,3 +68,8 @@
   :is-liked
   (fn [db [_ track-id]]
     (reaction (-> @db :tracks track-id :liked))))
+
+(re-frame/register-sub
+  :track-favorite-toggled?
+  (fn [db _]
+    (reaction (-> @db :track-favorite-toggled?))))

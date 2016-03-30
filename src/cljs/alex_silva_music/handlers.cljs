@@ -1,5 +1,5 @@
 (ns alex-silva-music.handlers
-    (:require [re-frame.core :refer [register-handler path]]
+    (:require [re-frame.core :refer [register-handler path dispatch]]
               [alex-silva-music.db :as db]))
 
 (register-handler
@@ -28,9 +28,10 @@
       new-collection-id)))
 
 (register-handler
-  :set-track-liked
+  :toggle-track-favorited
   (path :tracks)
   (fn [tracks [_ track-id]]
+    (dispatch [:track-favorite-toggled? true])
     (let [updated-track (update-in (track-id tracks) [:liked] not)]
       (assoc tracks track-id updated-track))))
 
@@ -54,3 +55,9 @@
       (let [track-url (-> db/default-db :tracks new-playing-track-id :url)
             state (if new-state new-state :play)]
         {:track-id new-playing-track-id :url track-url :state state :load? true}))))
+
+(register-handler
+  :track-favorite-toggled?
+  (path :track-favorite-toggled?)
+  (fn [_ [_ new-state]]
+    new-state))

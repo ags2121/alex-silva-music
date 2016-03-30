@@ -34,9 +34,21 @@ body {
     font-weight: 300;
 }
 
-.music-school-music, .likes, .links {
-    display: table;
-    margin: 0 29%;
+.favorites {
+    transition: background 1s;
+    -webkit-transition: 1s;
+    -moz-transition: 1s;
+    -o-transition: 1s;
+    -ms-transition: 1s;
+}
+
+.favorites.highlight {
+    background-color: #FDFD65;
+    transition: 0s;
+    -webkit-transition: 0s;
+    -moz-transition: 0s;
+    -o-transition: 0s;
+    -ms-transition: 0s;
 }
 
 .collections {
@@ -97,6 +109,7 @@ li.link {
 
 .icon {
     display: inline;
+    cursor: pointer;
 }
 
 .liked, .not-liked, .soundcloud, .score {

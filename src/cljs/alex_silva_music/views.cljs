@@ -11,7 +11,8 @@
   (-> id name (str/replace "-" " ") capitalize-all))
 
 (defn track-link [track-data link-key]
-  [:div {:class (str (name link-key) " icon") :href (-> track-data val link-key) :target "_blank"}
+  [:div {:class (str (name link-key) " icon")
+         :on-click #(.open js/window (-> track-data val link-key) "_blank")}
    [:img {:src (str "/assets/" (name link-key) ".png") :height 20 :width 20}]])
 
 (defn track [track-data]
@@ -25,7 +26,8 @@
         (if (nil? display-name) (id->name track-id) display-name)]
 
        [:span {:class    (if @is-liked "liked" "not-liked")
-               :on-click #(dispatch [:set-track-liked track-id])} " ♥"]
+               :on-click #(dispatch [:toggle-track-favorited track-id])}
+        " ♥"]
 
        [track-link track-data :soundcloud]
 
@@ -122,17 +124,41 @@
                  ]
                 ))])))
 
+(defn schedule-remove-highlight []
+  (.setTimeout js/window
+               (fn []
+                 (-> (.getElementsByClassName js/document "favorites")
+                    (.item 0)
+                    .-classList
+                    (.remove "highlight"))
+                 (dispatch [:track-favorite-toggled? false]))
+               1))
+
 (defn panels [panel-ids]
-  (let [active-panel (subscribe [:active-panel])]
+  (let [active-panel (subscribe [:active-panel])
+        track-favorite-toggled? (subscribe [:track-favorite-toggled?])]
     (fn []
       [:ul.panels
        (doall (for [panel-id panel-ids]
           ^{:key panel-id}
           [:li
-           [:a {:class (if (= panel-id @active-panel) "selected")
+
+           [:a {:class (str
+                         (name panel-id)
+                         (if (= panel-id @active-panel) " selected")
+                         (if (and (= :favorites panel-id) @track-favorite-toggled?)
+                           (do
+                             (schedule-remove-highlight)
+                             " highlight")))
+
                 :href  (str "#/" (name panel-id))}
-            (id->name panel-id)]                            ;; todo: highlight favorites tab when track like is toggled
+
+
+            (id->name panel-id)
+            ]
+
            ]))])))
+
 
 (defn track-player []
   (let [playing-track (subscribe [:playing-track])
