@@ -182,8 +182,11 @@
                      :type     "audio/mpeg"
                      :controls "controls"}]]
           [:div.now-playing
-           "Now Playing: "
-           [:span.italic (if @playing-track (str "\"" (id->name (:track-id @playing-track)) "\""))]
+           (if @playing-track
+             [:span.text "Now Playing: "])
+           (if @playing-track
+             [:span.text {:class "italic"}
+              (str "\"" (id->name (:track-id @playing-track)) "\"")])
            ]])})))
 
 (defn main-panel []
