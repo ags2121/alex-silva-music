@@ -6,6 +6,7 @@ body {
 
 body {
     font: 1.5em 'Aktiv Grotesk', sans-serif;
+    font-size: 2.5rem;
     line-height: 1;
     letter-spacing: -.1rem;
     background: #f5f5f5;
@@ -73,13 +74,12 @@ img {
 }
 
 .alex {
-    width: 10em;
+    width: 20em;
     display: block;
-    top: 50%;
+    top: 45%;
     position: absolute;
     left: 50%;
-    margin-left: -5em;
-    margin-bottom: 1em;
+    margin-left: -10em;
     opacity: 0.7;
     z-index: -1;
 }
@@ -98,22 +98,23 @@ li.link {
     position: absolute;
 }
 
+.score {
+    right: 105px;
+}
+
 .liked, .not-liked {
-    right: 50px;
+    right: 65px;
     font-size: .9em;
     cursor: pointer;
+    margin-top: 4px;
 }
 
 .soundcloud {
-    right: 20px;
-}
-
-.score {
-    right: 80px;
+    right: 25px;
 }
 
 hr {
-    border: 0.2em solid #4d4d4d;
+    border: 0.3rem solid #4d4d4d;
     margin: 0;
 }
 
@@ -176,14 +177,13 @@ ul {
     flex-direction: column;
     position: absolute;
     left: 50%;
-    margin-left: -140px;
+    margin-left: -6em;
+    min-width: 12em;
 }
 
 .track {
     display: block;
-    height: 30px;
-    min-width: 12em;
-    padding: 10px 0 0 5px;
+    height: 44px;
 }
 
 .track-name {
@@ -221,3 +221,4 @@ li a.selected {
     text-align: center;
     margin-top: 1em;
 }
+

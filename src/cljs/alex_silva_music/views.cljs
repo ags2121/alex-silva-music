@@ -13,7 +13,7 @@
 (defn track-link [track-data link-key]
   [:div {:class (str (name link-key) " icon")
          :on-click #(.open js/window (-> track-data val link-key) "_blank")}
-   [:img {:src (str "/assets/" (name link-key) ".png") :height 20 :width 20}]])
+   [:img {:src (str "/assets/" (name link-key) ".png") :height 30 :width 30}]])
 
 (defn track [track-data]
   (let [track-id (key track-data)
@@ -25,14 +25,14 @@
        [:span.track-name {:on-click #(dispatch [:set-playing-track track-id])}
         (if (nil? display-name) (id->name track-id) display-name)]
 
+       (if (-> track-data val :score)
+         [track-link track-data :score] )
+
        [:span {:class    (if @is-liked "liked" "not-liked")
                :on-click #(dispatch [:toggle-track-favorited track-id])}
         " ♥"]
 
        [track-link track-data :soundcloud]
-
-       (if (-> track-data val :score)
-         [track-link track-data :score] )
 
        ])))
 
