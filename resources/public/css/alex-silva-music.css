@@ -165,8 +165,9 @@ h1 a {
     position: relative;
 }
 
-.panel .tracks {
-    /*margin-top: 0.4em;*/
+.panel > .tracks {
+    top: inherit;
+    margin-top: 0.4em;
 }
 
 ul {
