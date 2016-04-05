@@ -99,18 +99,18 @@ li.link {
 }
 
 .score {
-    right: 105px;
+    right: 110px;
 }
 
 .liked, .not-liked {
-    right: 65px;
+    right: 70px;
     font-size: .9em;
     cursor: pointer;
     margin-top: 4px;
 }
 
 .soundcloud {
-    right: 25px;
+    right: 30px;
 }
 
 hr {
