@@ -44,8 +44,8 @@ body {
     margin-top: 0.5em;
 }
 
-.collection .tracks {
-    margin-top: 1em;
+.tracks.selected {
+    margin-top: 40px;
 }
 
 ul.tracks li {
@@ -166,7 +166,7 @@ h1 a {
 }
 
 .panel .tracks {
-    margin-top: 0.4em;
+    /*margin-top: 0.4em;*/
 }
 
 ul {
@@ -187,6 +187,7 @@ ul {
     left: 50%;
     margin-left: -7em;
     min-width: 14em;
+    top: 2em;
 }
 
 .track {

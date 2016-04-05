@@ -42,27 +42,72 @@
       [:div.panel {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
        [panel-body]])))
 
+(defn set-relative-margin []
+  (let [parent-bot (-> (.getElementsByClassName js/document "collection")
+                       (.item 2)
+                       .getBoundingClientRect
+                       .-top)
+        parent-bot2 (-> (.getElementsByClassName js/document "collections")
+                        (.item 0)
+                        .getBoundingClientRect
+                        .-top)
+        selected-tracks (-> (.getElementsByClassName js/document "tracks selected")
+                            (.item 0))]
+    (.log js/console (str (- parent-bot parent-bot2) "px"))
+    (if (and selected-tracks)
+      (set! (-> selected-tracks .-style .-marginTop) (str (- parent-bot parent-bot2) "px")))))
+
 (defn face-of-man-component [collection-ids]
   (let [active-project-id (subscribe [:active-project-id])
         active-collection-id (subscribe [:active-collection-id])]
     (fn []
       [:ul.collections {:class (if (= :face-of-man @active-project-id) "selected" "hidden")}
        (doall (for [collection-id collection-ids]
-          (let [collection-data (db/get-collection-data collection-id)]
-            [:li.collection {:key collection-id}
+                (let [collection-data (db/get-collection-data collection-id)]
+                  [:li.collection {:key collection-id}
 
-            [:a {:class (if (= collection-id @active-collection-id) "selected")
-                 :href  (str "#/projects/face-of-man/" (name collection-id))}
-             ;(str (id->name collection-id) (if-not (nil? (:year @collection)) (str " (" (:year @collection) ")"))) ;todo: add year?
-             (id->name collection-id)
-             ]
+                   ;(if (= collection-id @active-collection-id)
+                   ;  (let [parent-bot (-> (.getElementsByClassName js/document "collection")
+                   ;                       (.item 2)
+                   ;                       .getBoundingClientRect
+                   ;                       .-top)
+                   ;        parent-bot2 (-> (.getElementsByClassName js/document "collections")
+                   ;                        (.item 0)
+                   ;                        .getBoundingClientRect
+                   ;                        .-top)
+                   ;        selected-tracks (-> (.getElementsByClassName js/document "tracks selected")
+                   ;                            (.item 0))]
+                   ;    (.log js/console (str (- parent-bot parent-bot2) "px"))
+                   ;    (if (and selected-tracks)
+                   ;      (set! (-> selected-tracks .-style .-marginTop) (str (- parent-bot parent-bot2) "px")))))
 
-            [:ul.tracks {:class (if (= collection-id @active-collection-id) "selected" "hidden")}
-             (for [track-data (:tracks collection-data)]
-               ^{:key (key track-data)}
-               [:li [track track-data]])]
+                   [:a {:class (if (= collection-id @active-collection-id) "selected")
+                        :href  (str "#/projects/face-of-man/" (name collection-id))}
+                    ;(str (id->name collection-id) (if-not (nil? (:year @collection)) (str " (" (:year @collection) ")"))) ;todo: add year?
+                    (id->name collection-id)]
 
-            ])))])))
+
+                   [:ul.tracks {:class (if (= collection-id @active-collection-id) "selected" "hidden")}
+                    (for [track-data (:tracks collection-data)]
+                      ^{:key (key track-data)}
+                      [:li [track track-data]])]
+
+                   (set! (.-onresize js/window)
+                         (fn []
+                           (let [parent-bot (-> (.getElementsByClassName js/document "collection")
+                                                (.item 2)
+                                                .getBoundingClientRect
+                                                .-top)
+                                 parent-bot2 (-> (.getElementsByClassName js/document "collections")
+                                                 (.item 0)
+                                                 .getBoundingClientRect
+                                                 .-top)
+                                 selected-tracks (-> (.getElementsByClassName js/document "tracks selected")
+                                                     (.item 0))]
+                             (.log js/console (str (- parent-bot parent-bot2) "px"))
+                             (if (and selected-tracks)
+                               (set! (-> selected-tracks .-style .-marginTop) (str (- parent-bot parent-bot2) "px"))))))
+                   ])))])))
 
 (defn music-school-music-component []
   (let [other-tracks (subscribe [:tracks-by-project :compositions])]
