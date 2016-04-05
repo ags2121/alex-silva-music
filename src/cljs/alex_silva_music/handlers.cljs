@@ -36,14 +36,6 @@
       (assoc tracks track-id updated-track))))
 
 (register-handler
-  :set-active-track
-  (path :active-track-id)
-  (fn [current-track [_ new-track]]
-    (if (= current-track new-track)
-      nil
-      new-track)))
-
-(register-handler
   :set-playing-track
   (path :playing-track)
   (fn [current-playing-track-info [_ new-playing-track-id new-state]]

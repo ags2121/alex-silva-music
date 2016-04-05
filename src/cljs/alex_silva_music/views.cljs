@@ -189,10 +189,16 @@
               (str "\"" (id->name (:track-id @playing-track)) "\"")])
            ]])})))
 
+(defn picture []
+  (let [active-panel (subscribe [:active-panel])]
+    [:img.alex {:src "/assets/alex-studio.png"
+                :class (if @active-panel "hidden" "")}]))
+
 (defn main-panel []
   [:div
    [:div.header
-    [:h1 "alex silva music"]
+    [:h1
+     [:a {:href "#/"} "alex silva music"]]
     [track-player]]
    [:hr]
    [panels db/panels]
@@ -200,6 +206,4 @@
    [panel :bio (fn [] [:div.bio-text "Alex Silva is dope."])]
    [panel :links links-component]
    [panel :favorites favorites-component]
-   [:img.alex {:src  "/assets/alex-studio.png"}]
-   ]
-  )
+   [picture]])
