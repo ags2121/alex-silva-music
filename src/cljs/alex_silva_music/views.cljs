@@ -36,19 +36,6 @@
 
        ])))
 
-(defn collection [collection-id]
-  (let [active-collection-id (subscribe [:active-collection-id])
-        collection (subscribe [:collection collection-id])]
-    (fn []
-      [:div.collection
-       [:div.collection-name {:on-click #(dispatch [:set-active-collection collection-id])}
-        (str (id->name collection-id) (if-not (nil? (:year @collection)) (str " (" (:year @collection) ")")))]
-       [:ul.tracks {:class (if (= collection-id @active-collection-id) "selected" "hidden")}
-        (for [track-data (:tracks @collection)]
-          ^{:key (key track-data)}
-          [:li [track track-data]])]]
-      )))
-
 (defn panel [panel-id panel-body]
   (let [active-panel-id (subscribe [:active-panel])]
     (fn []
@@ -176,18 +163,17 @@
        toggle-audio-fn
        :reagent-render
        (fn []
-         [:div
-          [:audio.controls {:class "hidden" :controls "controls"}
+         [:div.now-playing
+          [:audio.controls.hidden {:controls "controls"}
            [:source {:src      (if @playing-track (:url @playing-track))
                      :type     "audio/mpeg"
                      :controls "controls"}]]
-          [:div.now-playing
-           (if @playing-track
-             [:span.text "Now Playing: "])
-           (if @playing-track
-             [:span.text {:class "italic"}
-              (str "\"" (id->name (:track-id @playing-track)) "\"")])
-           ]])})))
+
+          (if @playing-track
+            [:div
+             [:span.text "Now Playing: "]
+             [:span.text.italic (str "\"" (id->name (:track-id @playing-track)) "\"")]
+             ])])})))
 
 (defn picture []
   (let [active-panel (subscribe [:active-panel])]
