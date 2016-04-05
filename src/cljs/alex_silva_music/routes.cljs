@@ -32,7 +32,10 @@
   (defroute "/projects/face-of-man/:collection" [collection]
             (dispatch [:set-active-panel :projects])
             (dispatch [:set-active-project :face-of-man])
-            (dispatch [:set-active-collection (keyword collection)]))
+            (dispatch [:set-active-collection (keyword collection)])
+
+            ;(js/setTimeout #(.dispatchEvent js/window (js/Event. "resize")) 1)
+            )
 
   ;; --------------------
   (hook-browser-navigation!))
