@@ -1,7 +1,7 @@
 (ns alex-silva-music.views
   (:require [re-frame.core :refer [subscribe dispatch]]
             [clojure.string :as str :refer [replace capitalize]]
-            [reagent.core :as reagent :refer [atom dom-node]]
+            [reagent.core :as reagent :refer [atom dom-node current-component]]
             [alex-silva-music.db :as db]))
 
 (defn capitalize-all [string]
@@ -39,7 +39,8 @@
 (defn face-of-man-component [collection-ids]
   (let [active-project-id (subscribe [:active-project-id])
         active-collection-id (subscribe [:active-collection-id])
-        margin-top (reagent/atom 40)
+        top (reagent/atom 360)
+        tracks-margin-top (reagent/atom 40)
         get-tracks-margin-top #(let [grandparent-node (.querySelector js/document ".collections")
                                      last-uncle-top (some-> grandparent-node
                                                             .-lastChild
@@ -52,11 +53,20 @@
                                   (- last-uncle-top grandparent-top)))]
     (reagent/create-class
       {:component-did-mount
-       (fn []
-         (.addEventListener js/window "resize" #(reset! margin-top (get-tracks-margin-top))))
+       (fn [this]
+         (let [last-uncle-node (-> (reagent/dom-node this) .-parentNode .-parentNode .-lastChild)]
+           (.log js/console (-> last-uncle-node .getBoundingClientRect .-bottom))
+           (reset! tracks-margin-top (get-tracks-margin-top))
+           (reset! top (-> last-uncle-node .getBoundingClientRect .-bottom))
+           (.addEventListener js/window "resize" (fn []
+                                                   (.log js/console (-> last-uncle-node .getBoundingClientRect .-bottom))
+                                                   (reset! tracks-margin-top (get-tracks-margin-top))
+                                                   (reset! top (-> last-uncle-node .getBoundingClientRect .-bottom))
+                                                   ))))
        :reagent-render
        (fn []
-         [:ul.collections {:class (if (= :face-of-man @active-project-id) "selected" "hidden")}
+         [:ul.collections {:class (if (= :face-of-man @active-project-id) "selected" "hidden")
+                           :style {:top (str @top "px")}}
           (doall (for [collection-id collection-ids]
                    (let [collection-data (db/get-collection-data collection-id)]
                      [:li.collection {:key collection-id}
@@ -67,7 +77,7 @@
 
                       [:ul.tracks
                        {:class (if (= collection-id @active-collection-id) "selected" "hidden")
-                        :style {:margin-top (str @margin-top "px")}}
+                        :style {:margin-top (str @tracks-margin-top "px")}}
                        (for [track-data (:tracks collection-data)]
                          ^{:key (key track-data)}
                          [:li [track track-data]])]
@@ -193,19 +203,3 @@
    [panel :links links-component]
    [panel :favorites favorites-component]
    [picture]])
-
-; todo: clean this up
-
-(defn set-relative-margin-manually2 []
-  (let [top (-> (.querySelector js/document "ul.projects")
-                   .-lastChild
-                   .getBoundingClientRect
-                   .-bottom)
-        collections (.querySelector js/document ".collections")]
-    (if (and top collections)
-      (set! (-> collections .-style .-top) (str top "px")))))
-
-;(set! (.-onresize js/window) (fn []
-;                               ;(set-relative-margin-manually)
-;                               (set-relative-margin-manually2)
-;                               ))

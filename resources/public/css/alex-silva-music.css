@@ -148,7 +148,8 @@ h1 a {
 }
 
 .hidden {
-    display: none;
+    /*display: none;*/
+    visibility: hidden;
 }
 
 .panels {
