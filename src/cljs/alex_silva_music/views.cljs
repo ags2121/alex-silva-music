@@ -36,12 +36,6 @@
 
        ])))
 
-(defn panel [panel-id panel-body]
-  (let [active-panel-id (subscribe [:active-panel])]
-    (fn []
-      [:div.panel {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
-       [panel-body]])))
-
 (defn face-of-man-component [collection-ids]
   (let [active-project-id (subscribe [:active-project-id])
         active-collection-id (subscribe [:active-collection-id])
@@ -127,6 +121,12 @@
                  ]
                 ))])))
 
+(defn panel [panel-id panel-body]
+  (let [active-panel-id (subscribe [:active-panel])]
+    (fn []
+      [:div.panel {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
+       [panel-body]])))
+
 (defn schedule-remove-highlight []
   (.setTimeout js/window
                (fn []
@@ -137,7 +137,7 @@
                  (dispatch [:track-favorite-toggled? false]))
                1))
 
-(defn panels [panel-ids]
+(defn panel-labels [panel-ids]
   (let [active-panel (subscribe [:active-panel])
         track-favorite-toggled? (subscribe [:track-favorite-toggled?])]
     (fn []
@@ -150,7 +150,7 @@
                                (if (= panel-id @active-panel) " selected")
                                (if (and (= :favorites panel-id) @track-favorite-toggled?)
                                  (do
-                                   (schedule-remove-highlight)
+                                   (dispatch [:track-favorite-toggled? false])
                                    " highlight")))
                       :href  (str "#/" (name panel-id))}
                   (id->name panel-id)]
@@ -197,7 +197,7 @@
      [:a {:href "#/"} "alex silva music"]]
     [track-player]]
    [:hr]
-   [panels db/panels]
+   [panel-labels db/panels]
    [panel :projects (projects db/projects)]
    [panel :bio (fn [] [:div.bio-text "Alex Silva is dope."])]
    [panel :links links-component]
