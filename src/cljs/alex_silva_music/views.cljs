@@ -54,13 +54,6 @@
     (if (and parent-bot parent-bot2)
       (- parent-bot parent-bot2))))
 
-(defn set-relative-margin-manually []
-  (let [margin (get-tracks-top-margin)
-        selected-tracks (-> (.getElementsByClassName js/document "tracks selected")
-                            (.item 0))]
-    (if (and margin selected-tracks)
-      (set! (-> selected-tracks .-style .-marginTop) (str margin "px")))))
-
 (defn face-of-man-component [collection-ids]
   (let [active-project-id (subscribe [:active-project-id])
         active-collection-id (subscribe [:active-collection-id])]
@@ -84,8 +77,7 @@
                      (for [track-data (:tracks collection-data)]
                        ^{:key (key track-data)}
                        [:li [track track-data]])])
-
-                   (set! (.-onresize js/window) set-relative-margin-manually) ; todo: what's the right way to do this?
+                   
                    ])))])))
 
 (defn music-school-music-component []
@@ -130,7 +122,7 @@
                   (id->name project-id)]
                  (if (= project-id :face-of-man)
                    [face-of-man-component db/collections-ids]
-                   ;[music-school-music-component] ;todo
+                   ;[music-school-music-component] ; todo
                    )
                  ]
                 ))])))
@@ -151,24 +143,18 @@
     (fn []
       [:ul.panels
        (doall (for [panel-id panel-ids]
-          ^{:key panel-id}
-          [:li
-
-           [:a {:class (str
-                         (name panel-id)
-                         (if (= panel-id @active-panel) " selected")
-                         (if (and (= :favorites panel-id) @track-favorite-toggled?)
-                           (do
-                             (schedule-remove-highlight)
-                             " highlight")))
-
-                :href  (str "#/" (name panel-id))}
-
-
-            (id->name panel-id)
-            ]
-
-           ]))])))
+                ^{:key panel-id}
+                [:li
+                 [:a {:class (str
+                               (name panel-id)
+                               (if (= panel-id @active-panel) " selected")
+                               (if (and (= :favorites panel-id) @track-favorite-toggled?)
+                                 (do
+                                   (schedule-remove-highlight)
+                                   " highlight")))
+                      :href  (str "#/" (name panel-id))}
+                  (id->name panel-id)]
+                 ]))])))
 
 
 (defn track-player []
@@ -217,3 +203,25 @@
    [panel :links links-component]
    [panel :favorites favorites-component]
    [picture]])
+
+; todo: clean this up
+(defn set-relative-margin-manually []
+  (let [margin (get-tracks-top-margin)
+        selected-tracks (-> (.getElementsByClassName js/document "tracks selected")
+                            (.item 0))]
+    (if (and margin selected-tracks)
+      (set! (-> selected-tracks .-style .-marginTop) (str margin "px")))))
+
+(defn set-relative-margin-manually2 []
+  (let [top (-> (.querySelector js/document "ul.projects")
+                   .-lastChild
+                   .getBoundingClientRect
+                   .-bottom)
+        collections (.querySelector js/document ".collections")]
+    (if (and top collections)
+      (set! (-> collections .-style .-top) (str top "px")))))
+
+(set! (.-onresize js/window) (fn []
+                               (set-relative-margin-manually)
+                               (set-relative-margin-manually2)
+                               ))
