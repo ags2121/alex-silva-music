@@ -1,7 +1,7 @@
 (ns alex-silva-music.views
   (:require [re-frame.core :refer [subscribe dispatch]]
             [clojure.string :as str :refer [replace capitalize]]
-            [reagent.core :as reagent :refer [atom]]
+            [reagent.core :as reagent :refer [atom dom-node]]
             [alex-silva-music.db :as db]))
 
 (defn capitalize-all [string]
@@ -127,16 +127,6 @@
       [:div.panel {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
        [panel-body]])))
 
-(defn schedule-remove-highlight []
-  (.setTimeout js/window
-               (fn []
-                 (-> (.getElementsByClassName js/document "favorites")
-                    (.item 0)
-                    .-classList
-                    (.remove "highlight"))
-                 (dispatch [:track-favorite-toggled? false]))
-               1))
-
 (defn panel-labels [panel-ids]
   (let [active-panel (subscribe [:active-panel])
         track-favorite-toggled? (subscribe [:track-favorite-toggled?])]
@@ -159,13 +149,13 @@
 
 (defn track-player []
   (let [playing-track (subscribe [:playing-track])
-        toggle-audio-fn #(let [track-player (.item (.getElementsByTagName js/document "audio") 0)]
-                          (if (= :play (:state @playing-track))
-                            (do
-                              (if (:load? @playing-track)
-                                (.load track-player))
-                              (.play track-player))
-                            (.pause track-player)))]
+        toggle-audio-fn (fn [this] (let [track-player (.querySelector (reagent/dom-node this) "audio")]
+                                     (if (= :play (:state @playing-track))
+                                       (do
+                                         (if (:load? @playing-track)
+                                           (.load track-player))
+                                         (.play track-player))
+                                       (.pause track-player))))]
     (reagent/create-class
       {:component-did-mount
        toggle-audio-fn
