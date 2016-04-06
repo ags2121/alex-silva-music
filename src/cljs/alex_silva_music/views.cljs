@@ -1,7 +1,7 @@
 (ns alex-silva-music.views
   (:require [re-frame.core :refer [subscribe dispatch]]
             [clojure.string :as str :refer [replace capitalize]]
-            [reagent.core :as reagent :refer [dom-node]]
+            [reagent.core :as reagent :refer [atom]]
             [alex-silva-music.db :as db]))
 
 (defn capitalize-all [string]
@@ -42,43 +42,43 @@
       [:div.panel {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
        [panel-body]])))
 
-(defn get-tracks-top-margin []
-  (let [parent-bot (some-> (.getElementsByClassName js/document "collection")
-                           (.item 2)
-                           .getBoundingClientRect
-                           .-top)
-        parent-bot2 (some-> (.getElementsByClassName js/document "collections")
-                            (.item 0)
-                            .getBoundingClientRect
-                            .-top)]
-    (if (and parent-bot parent-bot2)
-      (- parent-bot parent-bot2))))
-
 (defn face-of-man-component [collection-ids]
   (let [active-project-id (subscribe [:active-project-id])
-        active-collection-id (subscribe [:active-collection-id])]
-    (fn []
-      [:ul.collections {:class (if (= :face-of-man @active-project-id) "selected" "hidden")}
-       (doall (for [collection-id collection-ids]
-                (let [collection-data (db/get-collection-data collection-id)]
-                  [:li.collection {:key collection-id}
+        active-collection-id (subscribe [:active-collection-id])
+        margin-top (reagent/atom 40)
+        get-tracks-margin-top #(let [grandparent-node (.querySelector js/document ".collections")
+                                     last-uncle-top (some-> grandparent-node
+                                                            .-lastChild
+                                                            .getBoundingClientRect
+                                                            .-top)
+                                     grandparent-top (some-> grandparent-node
+                                                             .getBoundingClientRect
+                                                             .-top)]
+                                (if (and last-uncle-top grandparent-node)
+                                  (- last-uncle-top grandparent-top)))]
+    (reagent/create-class
+      {:component-did-mount
+       (fn []
+         (.addEventListener js/window "resize" #(reset! margin-top (get-tracks-margin-top))))
+       :reagent-render
+       (fn []
+         [:ul.collections {:class (if (= :face-of-man @active-project-id) "selected" "hidden")}
+          (doall (for [collection-id collection-ids]
+                   (let [collection-data (db/get-collection-data collection-id)]
+                     [:li.collection {:key collection-id}
 
-                   [:a {:class (if (= collection-id @active-collection-id) "selected")
-                        :href  (str "#/projects/face-of-man/" (name collection-id))}
-                    ;(str (id->name collection-id) (if-not (nil? (:year @collection)) (str " (" (:year @collection) ")"))) ; todo: add year?
-                    (id->name collection-id)]
+                      [:a {:class (if (= collection-id @active-collection-id) "selected")
+                           :href  (str "#/projects/face-of-man/" (name collection-id))}
+                       (id->name collection-id)]
 
-                   (let [margin (get-tracks-top-margin)]
-                     [:ul.tracks
-                      (conj
-                        {:class (if (= collection-id @active-collection-id) "selected" "hidden")}
-                        (if (> margin 0)
-                          {:style {:margin-top (str margin "px")}}))
-                     (for [track-data (:tracks collection-data)]
-                       ^{:key (key track-data)}
-                       [:li [track track-data]])])
-                   
-                   ])))])))
+                      [:ul.tracks
+                       {:class (if (= collection-id @active-collection-id) "selected" "hidden")
+                        :style {:margin-top (str @margin-top "px")}}
+                       (for [track-data (:tracks collection-data)]
+                         ^{:key (key track-data)}
+                         [:li [track track-data]])]
+
+                      ])))])})))
 
 (defn music-school-music-component []
   (let [other-tracks (subscribe [:tracks-by-project :compositions])]
@@ -205,12 +205,6 @@
    [picture]])
 
 ; todo: clean this up
-(defn set-relative-margin-manually []
-  (let [margin (get-tracks-top-margin)
-        selected-tracks (-> (.getElementsByClassName js/document "tracks selected")
-                            (.item 0))]
-    (if (and margin selected-tracks)
-      (set! (-> selected-tracks .-style .-marginTop) (str margin "px")))))
 
 (defn set-relative-margin-manually2 []
   (let [top (-> (.querySelector js/document "ul.projects")
@@ -221,7 +215,7 @@
     (if (and top collections)
       (set! (-> collections .-style .-top) (str top "px")))))
 
-(set! (.-onresize js/window) (fn []
-                               (set-relative-margin-manually)
-                               (set-relative-margin-manually2)
-                               ))
+;(set! (.-onresize js/window) (fn []
+;                               ;(set-relative-margin-manually)
+;                               (set-relative-margin-manually2)
+;                               ))
