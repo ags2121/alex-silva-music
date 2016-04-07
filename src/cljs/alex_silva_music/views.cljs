@@ -90,14 +90,22 @@
 
                       ])))])})))
 
-(defn music-school-music-component []
-  (let [other-tracks (subscribe [:tracks-by-project :compositions])]
+(defn projects [projects-ids]
+  (let [active-project-id (subscribe [:active-project-id])]
     (fn []
-      [:ul.other
-       (for [track-data @other-tracks]
-         ^{:key (key track-data)}
-         [:li.track-container
-          [track track-data]])])))
+      [:ul.projects
+       (doall (for [project-id projects-ids]
+                ^{:key project-id}
+                [:li
+                 [:a {:class (if (= project-id @active-project-id) "selected")
+                      :href  (str "#/projects/" (name project-id))}
+                  (id->name project-id)]
+                 (if (= project-id :face-of-man)
+                   [face-of-man-component db/collections-ids]
+                   [tracks #(= project-id @active-project-id) (db/get-tracks-by-project project-id)]
+                   )
+                 ]
+                ))])))
 
 (defn links-component []
   (let [links (subscribe [:links])]
@@ -119,48 +127,6 @@
          ^{:key (key track-data)}
          [:li [track track-data]])]
       )))
-
-(defn projects [projects-ids]
-  (let [active-project-id (subscribe [:active-project-id])]
-    (fn []
-      [:ul.projects
-       (doall (for [project-id projects-ids]
-                ^{:key project-id}
-                [:li
-                 [:a {:class (if (= project-id @active-project-id) "selected")
-                      :href  (str "#/projects/" (name project-id))}
-                  (id->name project-id)]
-                 (if (= project-id :face-of-man)
-                   [face-of-man-component db/collections-ids]
-                   ;[music-school-music-component] ; todo
-                   )
-                 ]
-                ))])))
-
-(defn panel [panel-id panel-body]
-  (let [active-panel-id (subscribe [:active-panel])]
-    (fn []
-      [:div.panel {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
-       [panel-body]])))
-
-(defn panel-labels [panel-ids]
-  (let [active-panel (subscribe [:active-panel])
-        track-favorite-toggled? (subscribe [:track-favorite-toggled?])]
-    (fn []
-      [:ul.panels
-       (doall (for [panel-id panel-ids]
-                ^{:key panel-id}
-                [:li
-                 [:a {:class (str
-                               (name panel-id)
-                               (if (= panel-id @active-panel) " selected")
-                               (if (and (= :favorites panel-id) @track-favorite-toggled?)
-                                 (do
-                                   (dispatch [:track-favorite-toggled? false])
-                                   " highlight")))
-                      :href  (str "#/" (name panel-id))}
-                  (id->name panel-id)]
-                 ]))])))
 
 
 (defn track-player []
@@ -195,6 +161,31 @@
   (let [active-panel (subscribe [:active-panel])]
     [:img.alex {:src "/assets/alex-studio.png"
                 :class (if @active-panel "hidden" "")}]))
+
+(defn panel-labels [panel-ids]
+  (let [active-panel (subscribe [:active-panel])
+        track-favorite-toggled? (subscribe [:track-favorite-toggled?])]
+    (fn []
+      [:ul.panels
+       (doall (for [panel-id panel-ids]
+                ^{:key panel-id}
+                [:li
+                 [:a {:class (str
+                               (name panel-id)
+                               (if (= panel-id @active-panel) " selected")
+                               (if (and (= :favorites panel-id) @track-favorite-toggled?)
+                                 (do
+                                   (dispatch [:track-favorite-toggled? false])
+                                   " highlight")))
+                      :href  (str "#/" (name panel-id))}
+                  (id->name panel-id)]
+                 ]))])))
+
+(defn panel [panel-id panel-body]
+  (let [active-panel-id (subscribe [:active-panel])]
+    (fn []
+      [:div.panel {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
+       [panel-body]])))
 
 (defn main-panel []
   [:div

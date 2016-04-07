@@ -131,6 +131,9 @@
         collection-data-with-tracks (assoc collection-data :tracks tracks-for-collection)]
     collection-data-with-tracks))
 
+(defn get-tracks-by-project [project]
+  (filter #(= (-> % val :project) project) (:tracks default-db)))
+
 (def panels
   [:projects :bio :links :favorites])
 
