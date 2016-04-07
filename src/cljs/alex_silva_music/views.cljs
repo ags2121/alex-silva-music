@@ -40,29 +40,21 @@
   (let [active-project-id (subscribe [:active-project-id])
         active-collection-id (subscribe [:active-collection-id])
         top (reagent/atom 360)
-        tracks-margin-top (reagent/atom 40)
-        get-tracks-margin-top #(let [grandparent-node (.querySelector js/document ".collections")
-                                     last-uncle-top (some-> grandparent-node
-                                                            .-lastChild
-                                                            .getBoundingClientRect
-                                                            .-top)
-                                     grandparent-top (some-> grandparent-node
-                                                             .getBoundingClientRect
-                                                             .-top)]
-                                (if (and last-uncle-top grandparent-node)
-                                  (- last-uncle-top grandparent-top)))]
+        tracks-margin-top (reagent/atom 40)]
     (reagent/create-class
       {:component-did-mount
        (fn [this]
-         (let [last-uncle-node (-> (reagent/dom-node this) .-parentNode .-parentNode .-lastChild)]
-           (.log js/console (-> last-uncle-node .getBoundingClientRect .-bottom))
-           (reset! tracks-margin-top (get-tracks-margin-top))
-           (reset! top (-> last-uncle-node .getBoundingClientRect .-bottom))
+         (let [this-node (reagent/dom-node this)
+               last-child-node (.-lastChild this-node)
+               grandparent-node (-> this-node .-parentNode .-parentNode)
+               last-uncle-node (-> grandparent-node .-lastChild)
+               adjust-tracks-margin-top #(reset! tracks-margin-top (- (-> last-child-node .getBoundingClientRect .-top) (-> this-node .getBoundingClientRect .-top)))
+               adjust-top #(reset! top (- (-> last-uncle-node .getBoundingClientRect .-bottom) (-> (.querySelector js/document "html") .getBoundingClientRect .-top)))]
+           (adjust-tracks-margin-top)
+           (adjust-top)
            (.addEventListener js/window "resize" (fn []
-                                                   (.log js/console (-> last-uncle-node .getBoundingClientRect .-bottom))
-                                                   (reset! tracks-margin-top (get-tracks-margin-top))
-                                                   (reset! top (-> last-uncle-node .getBoundingClientRect .-bottom))
-                                                   ))))
+                                                   (adjust-tracks-margin-top)
+                                                   (adjust-top)))))
        :reagent-render
        (fn []
          [:ul.collections {:class (if (= :face-of-man @active-project-id) "selected" "hidden")
