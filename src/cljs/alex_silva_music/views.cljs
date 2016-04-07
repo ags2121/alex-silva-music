@@ -180,7 +180,7 @@
        :reagent-render
        (fn []
          [:div.now-playing
-          [:audio.controls.hidden {:controls "controls"}
+          [:audio.controls {:controls "controls"}
            [:source {:src      (if @playing-track (:url @playing-track))
                      :type     "audio/mpeg"
                      :controls "controls"}]]
