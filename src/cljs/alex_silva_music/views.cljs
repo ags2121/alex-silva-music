@@ -36,25 +36,42 @@
 
        ])))
 
-(defn face-of-man-component [collection-ids]
-  (let [active-project-id (subscribe [:active-project-id])
-        active-collection-id (subscribe [:active-collection-id])
-        top (reagent/atom 360)
-        tracks-margin-top (reagent/atom 40)]
+(defn tracks [is-visible? tracks]
+  (let [tracks-margin-top (reagent/atom 40)]
     (reagent/create-class
       {:component-did-mount
        (fn [this]
          (let [this-node (reagent/dom-node this)
-               last-child-node (.-lastChild this-node)
                grandparent-node (-> this-node .-parentNode .-parentNode)
                last-uncle-node (-> grandparent-node .-lastChild)
-               adjust-tracks-margin-top #(reset! tracks-margin-top (- (-> last-child-node .getBoundingClientRect .-top) (-> this-node .getBoundingClientRect .-top)))
-               adjust-top #(reset! top (- (-> last-uncle-node .getBoundingClientRect .-bottom) (-> (.querySelector js/document "html") .getBoundingClientRect .-top)))]
+               adjust-tracks-margin-top #(reset!
+                                          tracks-margin-top
+                                          (- (-> last-uncle-node .getBoundingClientRect .-top)
+                                             (-> grandparent-node .getBoundingClientRect .-top)))]
            (adjust-tracks-margin-top)
+           (.addEventListener js/window "resize" adjust-tracks-margin-top)))
+       :reagent-render
+       (fn []
+         [:ul.tracks
+          {:class (if (is-visible?) "selected" "hidden")
+           :style {:margin-top (str @tracks-margin-top "px")}}
+          (for [track-data tracks]
+            ^{:key (key track-data)}
+            [:li [track track-data]])])})))
+
+(defn face-of-man-component [collection-ids]
+  (let [active-project-id (subscribe [:active-project-id])
+        active-collection-id (subscribe [:active-collection-id])
+        top (reagent/atom 360)]
+    (reagent/create-class
+      {:component-did-mount
+       (fn [this]
+         (let [this-node (reagent/dom-node this)
+               grandparent-node (-> this-node .-parentNode .-parentNode)
+               last-uncle-node (-> grandparent-node .-lastChild)
+               adjust-top #(reset! top (- (-> last-uncle-node .getBoundingClientRect .-bottom) (-> (.querySelector js/document "html") .getBoundingClientRect .-top)))]
            (adjust-top)
-           (.addEventListener js/window "resize" (fn []
-                                                   (adjust-tracks-margin-top)
-                                                   (adjust-top)))))
+           (.addEventListener js/window "resize" adjust-top)))
        :reagent-render
        (fn []
          [:ul.collections {:class (if (= :face-of-man @active-project-id) "selected" "hidden")
@@ -67,12 +84,9 @@
                            :href  (str "#/projects/face-of-man/" (name collection-id))}
                        (id->name collection-id)]
 
-                      [:ul.tracks
-                       {:class (if (= collection-id @active-collection-id) "selected" "hidden")
-                        :style {:margin-top (str @tracks-margin-top "px")}}
-                       (for [track-data (:tracks collection-data)]
-                         ^{:key (key track-data)}
-                         [:li [track track-data]])]
+                      [tracks
+                       #(= collection-id @active-collection-id)
+                       (:tracks collection-data)]
 
                       ])))])})))
 
