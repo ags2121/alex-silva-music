@@ -36,25 +36,23 @@
 
        ])))
 
-(defn tracks [is-visible? tracks]
-  (let [tracks-margin-top (reagent/atom 40)]
+(defn resize-top [component top-state]
+  (let [this-node (reagent/dom-node component)
+        grandparent-node (-> this-node .-parentNode .-parentNode)
+        adjust-top #(reset! top-state (-> grandparent-node .getBoundingClientRect .-height))]
+    (adjust-top)
+    (.addEventListener js/window "resize" adjust-top)))
+
+(defn tracks [is-selected? tracks]
+  (let [top (reagent/atom 100)]
     (reagent/create-class
       {:component-did-mount
-       (fn [this]
-         (let [this-node (reagent/dom-node this)
-               grandparent-node (-> this-node .-parentNode .-parentNode)
-               last-uncle-node (-> grandparent-node .-lastChild)
-               adjust-tracks-margin-top #(reset!
-                                          tracks-margin-top
-                                          (- (-> last-uncle-node .getBoundingClientRect .-top)
-                                             (-> grandparent-node .getBoundingClientRect .-top)))]
-           (adjust-tracks-margin-top)
-           (.addEventListener js/window "resize" adjust-tracks-margin-top)))
+       (fn [this] (resize-top this top))
        :reagent-render
        (fn []
          [:ul.tracks
-          {:class (if (is-visible?) "selected" "hidden")
-           :style {:margin-top (str @tracks-margin-top "px")}}
+          {:class (if (is-selected?) "selected" "hidden")
+           :style {:top (str @top "px")}}
           (for [track-data tracks]
             ^{:key (key track-data)}
             [:li [track track-data]])])})))
@@ -62,16 +60,10 @@
 (defn face-of-man-component [collection-ids]
   (let [active-project-id (subscribe [:active-project-id])
         active-collection-id (subscribe [:active-collection-id])
-        top (reagent/atom 360)]
+        top (reagent/atom 100)]
     (reagent/create-class
       {:component-did-mount
-       (fn [this]
-         (let [this-node (reagent/dom-node this)
-               grandparent-node (-> this-node .-parentNode .-parentNode)
-               last-uncle-node (-> grandparent-node .-lastChild)
-               adjust-top #(reset! top (- (-> last-uncle-node .getBoundingClientRect .-bottom) (-> (.querySelector js/document "html") .getBoundingClientRect .-top)))]
-           (adjust-top)
-           (.addEventListener js/window "resize" adjust-top)))
+       (fn [this] (resize-top this top))
        :reagent-render
        (fn []
          [:ul.collections {:class (if (= :face-of-man @active-project-id) "selected" "hidden")
@@ -90,44 +82,93 @@
 
                       ])))])})))
 
-(defn projects [projects-ids]
-  (let [active-project-id (subscribe [:active-project-id])]
-    (fn []
-      [:ul.projects
-       (doall (for [project-id projects-ids]
-                ^{:key project-id}
-                [:li
-                 [:a {:class (if (= project-id @active-project-id) "selected")
-                      :href  (str "#/projects/" (name project-id))}
-                  (id->name project-id)]
-                 (if (= project-id :face-of-man)
-                   [face-of-man-component db/collections-ids]
-                   [tracks #(= project-id @active-project-id) (db/get-tracks-by-project project-id)]
-                   )
-                 ]
-                ))])))
+(defn projects [is-selected?]
+  (let [active-project-id (subscribe [:active-project-id])
+        projects-ids db/projects
+        top (reagent/atom 100)]
+    (reagent/create-class
+      {:component-did-mount
+       (fn [this] (resize-top this top))
+       :reagent-render
+       (fn []
+         [:ul.projects {:class (if (is-selected?) "selected" "hidden")
+                        :style {:top (str @top "px")}}
+          (doall (for [project-id projects-ids]
+                   ^{:key project-id}
+                   [:li
+                    [:a {:class (if (= project-id @active-project-id) "selected")
+                         :href  (str "#/projects/" (name project-id))}
+                     (id->name project-id)]
 
-(defn links-component []
-  (let [links (subscribe [:links])]
-    (fn []
-      [:ul.links
-       (for [link @links]
-         ^{:key (key link)}
-         [:li.link
-          [:a {:href (val link) :target "_blank"}
-           (let [link-name (id->name (key link))]
-             [:img {:src (str "/assets/" link-name ".png") :alt link-name :height 90 :width 90}])
-           ]])])))
+                    (if (= project-id :face-of-man)
+                      [face-of-man-component db/collections-ids]
+                      [tracks #(= project-id @active-project-id) (db/get-tracks-by-project project-id)])
+                    ]
+                   ))])})))
 
-(defn favorites-component []
+(defn links-component [is-selected?]
+  (let [links (subscribe [:links])
+        top (reagent/atom 100)]
+    (reagent/create-class
+      {:component-did-mount
+       (fn [this] (resize-top this top))
+       :reagent-render
+       (fn []
+         [:ul.links {:class (if (is-selected?) "selected" "hidden")
+                     :style {:top (str @top "px")}}
+          (for [link @links]
+            ^{:key (key link)}
+            [:li.link
+             [:a {:href (val link) :target "_blank"}
+              (let [link-name (id->name (key link))]
+                [:img {:src (str "/assets/" link-name ".png") :alt link-name :height 90 :width 90}])
+              ]])])})))
+
+(defn bio [is-selected?]
+  (let [top (reagent/atom 100)]
+    (reagent/create-class
+      {:component-did-mount
+       (fn [this] (resize-top this top))
+       :reagent-render
+       (fn []
+         [:div.bio-text {:class (if (is-selected?) "selected" "hidden")
+                         :style {:top (str @top "px")}}
+          "Alex Silva is dope."])})))
+
+(defn favorites-component [is-selected?]
   (let [liked-tracks (subscribe [:liked-tracks])]
-    (fn []
-      [:ul.tracks
-       (for [track-data @liked-tracks]
-         ^{:key (key track-data)}
-         [:li [track track-data]])]
-      )))
+    [:ul.tracks {:class (if (is-selected?) "selected" "hidden")}
+     (for [track-data @liked-tracks]
+       ^{:key (key track-data)}
+       [:li [track track-data]])]
+    ; todo: figure out how to reuse tracks component
+    ;(fn []
+    ;  (.log js/console (str "how?" (count @liked-tracks)))
+    ;  (let [t (into {} @liked-tracks)]
+    ;    [tracks is-selected? t])
+    ;  )
+    ))
 
+(defn panels [panel-args]
+  (let [active-panel (subscribe [:active-panel])
+        track-favorite-toggled? (subscribe [:track-favorite-toggled?])]
+    (fn []
+      [:ul.panels
+       (doall (for [panel-arg panel-args]
+                (let [[panel-id panel-component] panel-arg]
+                  [:li {:key panel-id}
+                   [:a {:class (str
+                                 (name panel-id)
+                                 (if (= panel-id @active-panel) " selected")
+                                 (if (and (= :favorites panel-id) @track-favorite-toggled?)
+                                   (do
+                                     (dispatch [:track-favorite-toggled? false])
+                                     " highlight")))
+                        :href  (str "#/" (name panel-id))}
+                    (id->name panel-id)]
+
+                   [panel-component #(= panel-id @active-panel)]
+                   ])))])))
 
 (defn track-player []
   (let [playing-track (subscribe [:playing-track])
@@ -159,33 +200,8 @@
 
 (defn picture []
   (let [active-panel (subscribe [:active-panel])]
-    [:img.alex {:src "/assets/alex-studio.png"
+    [:img.alex {:src   "/assets/alex-studio.png"
                 :class (if @active-panel "hidden" "")}]))
-
-(defn panel-labels [panel-ids]
-  (let [active-panel (subscribe [:active-panel])
-        track-favorite-toggled? (subscribe [:track-favorite-toggled?])]
-    (fn []
-      [:ul.panels
-       (doall (for [panel-id panel-ids]
-                ^{:key panel-id}
-                [:li
-                 [:a {:class (str
-                               (name panel-id)
-                               (if (= panel-id @active-panel) " selected")
-                               (if (and (= :favorites panel-id) @track-favorite-toggled?)
-                                 (do
-                                   (dispatch [:track-favorite-toggled? false])
-                                   " highlight")))
-                      :href  (str "#/" (name panel-id))}
-                  (id->name panel-id)]
-                 ]))])))
-
-(defn panel [panel-id panel-body]
-  (let [active-panel-id (subscribe [:active-panel])]
-    (fn []
-      [:div.panel {:class (if (= panel-id @active-panel-id) "selected" "hidden")}
-       [panel-body]])))
 
 (defn main-panel []
   [:div
@@ -194,9 +210,16 @@
      [:a {:href "#/"} "alex silva music"]]
     [track-player]]
    [:hr]
-   [panel-labels db/panels]
-   [panel :projects (projects db/projects)]
-   [panel :bio (fn [] [:div.bio-text "Alex Silva is dope."])]
-   [panel :links links-component]
-   [panel :favorites favorites-component]
+   ;[panel-labels db/panels]
+   [panels
+    [
+     [:projects projects]
+     [:bio bio]
+     [:links links-component]
+     [:favorites favorites-component]
+     ]]
+   ;[panel :projects (projects db/projects)]
+   ;[panel :bio (fn [] [:div.bio-text "Alex Silva is dope."])]
+   ;[panel :links links-component]
+   ;[panel :favorites favorites-component]
    [picture]])

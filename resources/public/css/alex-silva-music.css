@@ -35,14 +35,13 @@ body {
     -ms-transition: 0s;
 }
 
-.collections {
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 0.5em;
-}
+/*.collections {*/
+    /*position: absolute;*/
+    /*left: 0;*/
+    /*right: 0;*/
+    /*margin-left: auto;*/
+    /*margin-right: auto;*/
+/*}*/
 
 ul.tracks li {
     margin: -1px;
@@ -163,13 +162,14 @@ h1 a {
 }
 
 .panel > .tracks {
-    top: 0;
-    margin-top: 7.3em;
+    /*top: 0;*/
+    /*margin-top: 7.3em;*/
 }
 
 ul {
+    position: absolute;
     list-style: none;
-    margin: 0;
+    /*margin: 0;*/
     padding: 0.5em 0.5em 0 0.5em;
     display: flex;
     display: -webkit-flex;
@@ -177,18 +177,20 @@ ul {
     -webkit-flex-wrap: wrap;
     justify-content: center;
     -webkit-justify-content: center;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
 }
 
 .tracks {
     flex-direction: column;
-    position: absolute;
-    left: 50%;
-    margin-left: -7em;
     min-width: 14em;
+    max-width: 14em;
+    margin-top: 0.3em;
 }
 
 .collection > .tracks {
-    top: 2em;
+    /*top: 2em;*/
 }
 
 .track {
@@ -231,4 +233,5 @@ li a.selected {
 .bio-text {
     text-align: center;
     padding-top: 1em;
+    position: absolute;
 }
