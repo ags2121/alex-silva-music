@@ -1,14 +1,18 @@
 (ns alex-silva-music.views
   (:require [re-frame.core :refer [subscribe dispatch]]
             [clojure.string :as str :refer [replace capitalize]]
-            [reagent.core :as reagent :refer [atom dom-node current-component]]
+            [reagent.core :as reagent :refer [atom dom-node]]
             [alex-silva-music.db :as db]))
+
+; -- Helpers -----------------------------------------------------------------
 
 (defn capitalize-all [string]
   (str/join " " (map #(if (contains? #{"of" "i" "ii"} %) % (str/capitalize %)) (str/split string #" "))))
 
 (defn id->name [id]
   (-> id name (str/replace "-" " ") capitalize-all))
+
+; -- Components -----------------------------------------------------------------
 
 (defn track-link [track-data link-key]
   [:div {:class (str (name link-key) " icon")
@@ -43,22 +47,22 @@
     (adjust-top)
     (.addEventListener js/window "resize" adjust-top)))
 
-(defn tracks [is-selected? tracks]
+(defn tracks [is-selected? track-datas]                     ; ignore unused vars warning. see rules about Form-2 components.
   (let [top (reagent/atom 100)]
     (reagent/create-class
       {:component-did-mount
        (fn [this] (resize-top this top))
        :reagent-render
-       (fn []
+       (fn [is-selected? track-datas]
          [:ul.tracks
           {:class (if (is-selected?) "selected" "hidden")
            :style {:top (str @top "px")}}
-          (for [track-data tracks]
+          (for [track-data track-datas]
             ^{:key (key track-data)}
             [:li [track track-data]])])})))
 
-(defn face-of-man-component [collection-ids]
-  (let [active-project-id (subscribe [:active-project-id])
+(defn face-of-man-component [is-selected?]
+  (let [collection-ids db/collections-ids
         active-collection-id (subscribe [:active-collection-id])
         top (reagent/atom 100)]
     (reagent/create-class
@@ -66,7 +70,7 @@
        (fn [this] (resize-top this top))
        :reagent-render
        (fn []
-         [:ul.collections {:class (if (= :face-of-man @active-project-id) "selected" "hidden")
+         [:ul.collections {:class (if (is-selected?) "selected" "hidden")
                            :style {:top (str @top "px")}}
           (doall (for [collection-id collection-ids]
                    (let [collection-data (db/get-collection-data collection-id)]
@@ -94,20 +98,20 @@
          [:ul.projects {:class (if (is-selected?) "selected" "hidden")
                         :style {:top (str @top "px")}}
           (doall (for [project-id projects-ids]
-                   ^{:key project-id}
-                   [:li
-                    [:a {:class (if (= project-id @active-project-id) "selected")
-                         :href  (str "#/projects/" (name project-id))}
-                     (id->name project-id)]
+                   (let [is-selected? #(= project-id @active-project-id)]
+                     [:li {:key project-id}
+                      [:a {:class (if (is-selected?) "selected")
+                           :href  (str "#/projects/" (name project-id))}
+                       (id->name project-id)]
 
-                    (if (= project-id :face-of-man)
-                      [face-of-man-component db/collections-ids]
-                      [tracks #(= project-id @active-project-id) (db/get-tracks-by-project project-id)])
-                    ]
+                      (if (= project-id :face-of-man)
+                        [face-of-man-component is-selected?]
+                        [tracks is-selected? (db/get-tracks-by-project project-id)])
+                      ])
                    ))])})))
 
 (defn links-component [is-selected?]
-  (let [links (subscribe [:links])
+  (let [links db/links
         top (reagent/atom 100)]
     (reagent/create-class
       {:component-did-mount
@@ -116,7 +120,7 @@
        (fn []
          [:ul.links {:class (if (is-selected?) "selected" "hidden")
                      :style {:top (str @top "px")}}
-          (for [link @links]
+          (for [link links]
             ^{:key (key link)}
             [:li.link
              [:a {:href (val link) :target "_blank"}
@@ -137,17 +141,7 @@
 
 (defn favorites-component [is-selected?]
   (let [liked-tracks (subscribe [:liked-tracks])]
-    [:ul.tracks {:class (if (is-selected?) "selected" "hidden")}
-     (for [track-data @liked-tracks]
-       ^{:key (key track-data)}
-       [:li [track track-data]])]
-    ; todo: figure out how to reuse tracks component
-    ;(fn []
-    ;  (.log js/console (str "how?" (count @liked-tracks)))
-    ;  (let [t (into {} @liked-tracks)]
-    ;    [tracks is-selected? t])
-    ;  )
-    ))
+    [tracks is-selected? @liked-tracks]))
 
 (defn panels [panel-args]
   (let [active-panel (subscribe [:active-panel])
@@ -210,16 +204,9 @@
      [:a {:href "#/"} "alex silva music"]]
     [track-player]]
    [:hr]
-   ;[panel-labels db/panels]
    [panels
-    [
-     [:projects projects]
+    [[:projects projects]
      [:bio bio]
      [:links links-component]
-     [:favorites favorites-component]
-     ]]
-   ;[panel :projects (projects db/projects)]
-   ;[panel :bio (fn [] [:div.bio-text "Alex Silva is dope."])]
-   ;[panel :links links-component]
-   ;[panel :favorites favorites-component]
+     [:favorites favorites-component]]]
    [picture]])

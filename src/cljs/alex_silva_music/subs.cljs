@@ -2,24 +2,14 @@
   (:require-macros [reagent.ratom :refer [reaction]])
   (:require [re-frame.core :as re-frame]))
 
-;; -- Helpers -----------------------------------------------------------------
+; -- Helpers -----------------------------------------------------------------
 
 (defn liked-tracks
   "return the tracks for which :liked is true"
   [db]
   (filter #(-> % val :liked) (:tracks db)))
 
-;; -- Subscription handlers and registration  ---------------------------------
-
-(re-frame/register-sub
-  :collections
-  (fn [db _]
-    (reaction (map key (:collections @db)))))
-
-(re-frame/register-sub
-  :tracks-by-project
-  (fn [db [_ project]]
-    (reaction (filter #(= (-> % val :project) project) (:tracks @db)))))
+; -- Subscription handlers and registration  ---------------------------------
 
 (re-frame/register-sub
   :collection
@@ -53,11 +43,6 @@
   :playing-track
   (fn [db _]
     (reaction (:playing-track @db))))
-
-(re-frame/register-sub
-  :links
-  (fn [db _]
-    (reaction (:links @db))))
 
 (re-frame/register-sub
   :liked-tracks

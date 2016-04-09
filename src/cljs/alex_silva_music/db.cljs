@@ -134,8 +134,8 @@
 (defn get-tracks-by-project [project]
   (filter #(= (-> % val :project) project) (:tracks default-db)))
 
-(def panels
-  [:projects :bio :links :favorites])
+(def links
+  (:links default-db))
 
 (def projects
   (distinct (map #(-> % val :project) (-> base-db :tracks))))
