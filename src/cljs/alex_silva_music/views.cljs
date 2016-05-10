@@ -4,7 +4,10 @@
             [reagent.core :as reagent :refer [atom dom-node]]
             [alex-silva-music.db :as db]))
 
-; -- Helpers -----------------------------------------------------------------
+;; -- Helper functions ----------------------------------------------------------
+;;
+;;
+;;
 
 (defn capitalize-all [string]
   (str/join " " (map #(if (contains? #{"of" "i" "ii"} %) % (str/capitalize %)) (str/split string #" "))))
@@ -12,7 +15,10 @@
 (defn id->name [id]
   (-> id name (str/replace "-" " ") capitalize-all))
 
-; -- Components -----------------------------------------------------------------
+;; -- Components ----------------------------------------------------------
+;;
+;;
+;;
 
 (defn track-link [track-data link-key]
   [:div {:class (str (name link-key) " icon")

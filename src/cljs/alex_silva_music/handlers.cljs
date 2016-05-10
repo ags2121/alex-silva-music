@@ -1,11 +1,35 @@
 (ns alex-silva-music.handlers
-    (:require [re-frame.core :refer [register-handler path dispatch]]
-              [alex-silva-music.db :as db]))
+  (:require [re-frame.core :refer [register-handler path dispatch]]
+            [alex-silva-music.db :refer [default-db ls->favorite-tracks favorite-tracks->ls! schema]]
+            [schema.core :as s]))
+
+;; -- Custom Middleware ----------------------------------------------------------
+;;
+;;
+;;
+
+;(defn check-and-throw
+;  "throw an exception if db doesn't match the schema."
+;  [a-schema db]
+;  (if-let [problems (s/check a-schema db)]
+;    (throw (js/Error. (str "schema check failed: " problems)))))
+;
+;;; after an event handler has run, this middleware can check that
+;;; the value in app-db still correctly matches the schema.
+;(def check-schema-mw (after (partial check-and-throw schema)))
+;
+;;; middleware to store todos into local storage
+;(def ->ls (after favorite-tracks->ls!))
+
+;; -- Handlers ----------------------------------------------------------
+;;
+;;
+;;
 
 (register-handler
   :initialize-db
-  (fn  [_ _]
-    db/default-db))
+  (fn [_ _]
+    default-db))
 
 (register-handler
   :set-active-panel
@@ -44,7 +68,7 @@
                                                  :pause
                                                  :play)
                                         :load? false)
-      (let [track-url (-> db/default-db :tracks new-playing-track-id :url)
+      (let [track-url (-> default-db :tracks new-playing-track-id :url)
             state (if new-state new-state :play)]
         {:track-id new-playing-track-id :url track-url :state state :load? true}))))
 

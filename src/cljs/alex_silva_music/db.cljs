@@ -1,4 +1,52 @@
-(ns alex-silva-music.db)
+(ns alex-silva-music.db
+  (:require [cljs.reader]
+            [schema.core :as s :include-macros true]))
+
+;; -- Schema -----------------------------------------------------------------
+;;
+;; This is a Prismatic Schema which documents the structure of app-db
+;; See: https://github.com/Prismatic/schema
+;;
+
+(def Credits
+  (s/conditional
+    #(instance? PersistentArrayMap %)
+    {s/Str [s/Str]}))
+
+(def CollectionName (s/enum :recent-work :at-the-pheelharmonic :face-of-man))
+
+(def Track {:project                       (s/enum :face-of-man :compositions :personal-space)
+            :soundcloud                    s/Str
+            :url                           s/Str
+            (s/optional-key :score)        s/Str
+            (s/optional-key :display-name) s/Str
+            (s/optional-key :collection)   CollectionName
+            (s/optional-key :liked)        s/Bool
+            (s/optional-key :year)         s/Int
+            (s/optional-key :credits)      Credits
+            (s/optional-key :performer)    s/Keyword
+            })
+
+(def schema {:collections          (s/conditional
+                                     #(instance? PersistentArrayMap %)
+                                     {CollectionName {:credits               Credits
+                                                      (s/optional-key :year) s/Int}})
+             :tracks               (s/conditional
+                                     #(instance? PersistentArrayMap %)
+                                     {s/Keyword Track})
+             :links                (s/conditional
+                                     #(instance? PersistentArrayMap %)
+                                     {s/Keyword s/Str})
+             :favorites            [s/Keyword]
+             :active-panel         (s/maybe s/Keyword)
+             :active-project-id    (s/maybe s/Keyword)
+             :active-collection-id (s/maybe s/Keyword)
+             :active-track-id      (s/maybe s/Keyword)})
+
+;; -- Default app-db Value  ---------------------------------------------------
+;;
+;; When the application first starts, this will be the value put in app-db. See the default-db fn
+;;
 
 (def base-url "https://dl.dropboxusercontent.com/u/12514699/alex-silva-music/")
 (def base-score-url (str base-url "scores/"))
@@ -13,14 +61,14 @@
              "Jesse Chevan" ["Drums"]))
 
 (def base-db
-  {:collections          (array-map :recent-work {:credits [{"Alex Silva" ["vocals" "guitar"]}]}
+  {:collections          (array-map :recent-work {:credits (array-map "Alex Silva" ["vocals" "guitar"])}
 
                                     :at-the-pheelharmonic {:year    2012
-                                                           :credits [{"Alex Silva" ["lead vocals" "guitar" "synths" "electronics"]}
-                                                                     {"Coleman Moore" ["deep vocals" "guitar"]}
-                                                                     {"Lara Andersson" ["lady vocals"]}
-                                                                     {"Doug Berns" ["electric bass"]}
-                                                                     {"Jesse Chevan" ["drums"]}]}
+                                                           :credits (array-map "Alex Silva" ["lead vocals" "guitar" "synths" "electronics"]
+                                                                               "Coleman Moore" ["deep vocals" "guitar"]
+                                                                               "Lara Andersson" ["lady vocals"]
+                                                                               "Doug Berns" ["electric bass"]
+                                                                               "Jesse Chevan" ["drums"])}
 
                                     :face-of-man {:year    2011
                                                   :credits (array-map "Alex Silva" ["lead vocals" "guitar" "synths" "electronics" "electric bass"]
@@ -64,7 +112,7 @@
                                     :mr-silvas-magnet-school {:display-name "Mr Silva's Magnet School"
                                                               :project      :compositions
                                                               :year         2010
-                                                              :group        :face-of-man-quintet
+                                                              :performer    :face-of-man-quintet
                                                               :credits      face-of-man-quintet-creds}
 
                                     :i-dalliance {:project :compositions
@@ -98,6 +146,7 @@
                                     :facebook "https://www.facebook.com/faceofmanband/"
                                     :twitter "https://twitter.com/faceofmanband"
                                     :itunes "https://itunes.apple.com/us/artist/face-of-man/id441404508")
+   :favorites            [:planes :like-devils-fly :ethnopoetics :la-chat-roulette :i-dalliance]
    :active-panel         nil
    :active-project-id    nil
    :active-collection-id nil
@@ -125,6 +174,11 @@
 (def default-db
   (add-track-urls base-db))
 
+;; -- API  ----------------------------------------------------------
+;;
+;;
+;;
+
 (defn get-collection-data [collection-id]
   (let [collection-data (collection-id (:collections default-db))
         tracks-for-collection (into [] (filter #(= (-> % val :collection) collection-id) (:tracks default-db)))
@@ -142,3 +196,24 @@
 
 (def collections-ids
   (-> base-db :collections keys))
+
+
+;; -- Local Storage  ----------------------------------------------------------
+;;
+;; store favorite tracks in local storage
+;;
+
+(def lsk "alex-silva-music")                                ;; localstore key
+
+(defn ls->favorite-tracks
+  "Read in todos from LS, and process into a map we can merge into app-db."
+  []
+  (some->> (.getItem js/localStorage lsk)
+           (cljs.reader/read-string)                        ;; stored as an EDN map.
+           (into (sorted-map))                              ;; map -> sorted-map
+           (hash-map :favorite-tracks)))                    ;; access via the :todos key
+
+(defn favorite-tracks->ls!
+  "Puts favorite tracks into localStorage"
+  [favorite-tracks]
+  (.setItem js/localStorage lsk (str favorite-tracks)))     ;; sorted-map writen as an EDN map
