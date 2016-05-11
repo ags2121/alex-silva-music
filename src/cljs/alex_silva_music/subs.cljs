@@ -7,14 +7,10 @@
 ;;
 ;;
 
-(defn liked-tracks
-  "return the tracks for which :liked is true"
+(defn favorite-tracks
   [db]
-  (filter #(-> % val :liked) (:tracks db)))
-
-(defn favorited-tracks
-  [db]
-  (:favorites db))
+  (let [favorite-tracks-set (set (:favorites db))]
+    (filter #(contains? favorite-tracks-set (-> % key)) (:tracks db))))
 
 ;; -- Subscription handlers and registration ----------------------------------------------------------
 ;;
@@ -55,24 +51,14 @@
     (reaction (:playing-track @db))))
 
 (re-frame/register-sub
-  :liked-tracks
-  (fn [db _]
-    (reaction (liked-tracks @db))))
-
-(re-frame/register-sub
   :favorite-tracks
   (fn [db _]
-    (reaction (liked-tracks @db))))
-
-(re-frame/register-sub
-  :is-liked
-  (fn [db [_ track-id]]
-    (reaction (-> @db :tracks track-id :liked))))
+    (reaction (favorite-tracks @db))))
 
 (re-frame/register-sub
   :is-favorite
   (fn [db [_ track-id]]
-    (reaction (-> @db :favorites (contains? track-id)))))
+    (reaction (->> @db :favorites (some #(= track-id %))))))
 
 (re-frame/register-sub
   :track-favorite-toggled?

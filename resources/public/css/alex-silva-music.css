@@ -43,11 +43,11 @@ ul.tracks li {
     font-style: italic;
 }
 
-.not-liked {
+.not-favorite {
     color: #D0D0D0;
 }
 
-.liked {
+.favorite {
     color: black;
 }
 
@@ -81,7 +81,7 @@ li.link {
     cursor: pointer;
 }
 
-.liked, .not-liked, .soundcloud, .score {
+.favorite, .not-favorite, .soundcloud, .score {
     position: absolute;
 }
 
@@ -89,7 +89,7 @@ li.link {
     right: 110px;
 }
 
-.liked, .not-liked {
+.favorite, .not-favorite {
     right: 70px;
     font-size: .9em;
     cursor: pointer;

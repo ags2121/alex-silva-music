@@ -53,11 +53,12 @@
 
 (register-handler
   :toggle-track-favorited
-  (path :tracks)
-  (fn [tracks [_ track-id]]
+  (path :favorites)
+  (fn [favorites [_ track-id]]
     (dispatch [:track-favorite-toggled? true])
-    (let [updated-track (update-in (track-id tracks) [:liked] not)]
-      (assoc tracks track-id updated-track))))
+    (if (contains? (set favorites) track-id)
+      (into [] (filter #(not (= % track-id)) favorites))
+      (conj favorites track-id))))
 
 (register-handler
   :set-playing-track

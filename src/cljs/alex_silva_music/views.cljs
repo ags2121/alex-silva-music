@@ -28,7 +28,7 @@
 (defn track [track-data]
   (let [track-id (key track-data)
         display-name (-> track-data val :display-name)
-        is-liked (subscribe [:is-liked track-id])
+        is-favorite (subscribe [:is-favorite track-id])
         playing-track (subscribe [:playing-track])]
     (fn []
       [:a.track {:class    (if (= track-id (:track-id @playing-track)) "selected")}
@@ -38,7 +38,7 @@
        (if (-> track-data val :score)
          [track-link track-data :score] )
 
-       [:span {:class    (if @is-liked "liked" "not-liked")
+       [:span {:class    (if @is-favorite "favorite" "not-favorite")
                :on-click #(dispatch [:toggle-track-favorited track-id])}
         " ♥"]
 
@@ -146,8 +146,8 @@
           "Alex Silva is dope."])})))
 
 (defn favorites-component [is-selected?]
-  (let [liked-tracks (subscribe [:liked-tracks])]
-    [tracks is-selected? @liked-tracks]))
+  (let [favorite-tracks (subscribe [:favorite-tracks])]
+    [tracks is-selected? @favorite-tracks]))
 
 (defn panels [panel-args]
   (let [active-panel (subscribe [:active-panel])

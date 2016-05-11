@@ -21,7 +21,6 @@
             (s/optional-key :score)        s/Str
             (s/optional-key :display-name) s/Str
             (s/optional-key :collection)   CollectionName
-            (s/optional-key :liked)        s/Bool
             (s/optional-key :year)         s/Int
             (s/optional-key :credits)      Credits
             (s/optional-key :performer)    s/Keyword
@@ -77,15 +76,13 @@
                                                                       "Jojo Samuels" ["lady vocals on \"Future Half\""])})
 
    :tracks               (array-map :planes {:collection :recent-work
-                                             :project    :face-of-man
-                                             :liked      true}
+                                             :project    :face-of-man}
 
                                     :bouquet {:collection :recent-work
                                               :project    :face-of-man}
 
                                     :like-devils-fly {:collection :at-the-pheelharmonic
-                                                      :project    :face-of-man
-                                                      :liked      true}
+                                                      :project    :face-of-man}
 
                                     :altiloquence {:collection :at-the-pheelharmonic
                                                    :project    :face-of-man}
@@ -94,8 +91,7 @@
                                                :project    :face-of-man}
 
                                     :ethnopoetics {:collection :face-of-man
-                                                   :project    :face-of-man
-                                                   :liked      true}
+                                                   :project    :face-of-man}
 
                                     :a-sharper-image {:collection :face-of-man
                                                       :project    :face-of-man}
@@ -106,8 +102,7 @@
                                     :la-chat-roulette {:project   :compositions
                                                        :year      2010
                                                        :performer :face-of-man-quintet
-                                                       :credits   face-of-man-quintet-creds
-                                                       :liked     true}
+                                                       :credits   face-of-man-quintet-creds}
 
                                     :mr-silvas-magnet-school {:display-name "Mr Silva's Magnet School"
                                                               :project      :compositions
@@ -117,8 +112,7 @@
 
                                     :i-dalliance {:project :compositions
                                                   :year    2013
-                                                  :credits {"Alex Silva" ["programming"]}
-                                                  :liked   true}
+                                                  :credits {"Alex Silva" ["programming"]}}
 
                                     :ii-convergence {:project :compositions
                                                      :year    2013
