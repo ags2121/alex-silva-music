@@ -26,21 +26,22 @@
             (s/optional-key :performer)    s/Keyword
             })
 
-(def schema {:collections          (s/conditional
-                                     #(instance? PersistentArrayMap %)
-                                     {CollectionName {:credits               Credits
-                                                      (s/optional-key :year) s/Int}})
-             :tracks               (s/conditional
-                                     #(instance? PersistentArrayMap %)
-                                     {s/Keyword Track})
-             :links                (s/conditional
-                                     #(instance? PersistentArrayMap %)
-                                     {s/Keyword s/Str})
-             :favorites            [s/Keyword]
-             :active-panel         (s/maybe s/Keyword)
-             :active-project-id    (s/maybe s/Keyword)
-             :active-collection-id (s/maybe s/Keyword)
-             :active-track-id      (s/maybe s/Keyword)})
+(def schema {:collections                              (s/conditional
+                                                         #(instance? PersistentArrayMap %)
+                                                         {CollectionName {:credits               Credits
+                                                                          (s/optional-key :year) s/Int}})
+             :tracks                                   (s/conditional
+                                                         #(instance? PersistentArrayMap %)
+                                                         {s/Keyword Track})
+             :links                                    (s/conditional
+                                                         #(instance? PersistentArrayMap %)
+                                                         {s/Keyword s/Str})
+             :favorites                                [s/Keyword]
+             (s/optional-key :track-favorite-toggled?) s/Bool
+             :active-panel                             (s/maybe s/Keyword)
+             :active-project-id                        (s/maybe s/Keyword)
+             :active-collection-id                     (s/maybe s/Keyword)
+             :active-track-id                          (s/maybe s/Keyword)})
 
 ;; -- Default app-db Value  ---------------------------------------------------
 ;;
@@ -200,14 +201,13 @@
 (def lsk "alex-silva-music")                                ;; localstore key
 
 (defn ls->favorite-tracks
-  "Read in todos from LS, and process into a map we can merge into app-db."
+  "Read in favorite-tracks from LS, and process into a map that can merge into app-db."
   []
   (some->> (.getItem js/localStorage lsk)
-           (cljs.reader/read-string)                        ;; stored as an EDN map.
-           (into (sorted-map))                              ;; map -> sorted-map
-           (hash-map :favorite-tracks)))                    ;; access via the :todos key
+           (cljs.reader/read-string)
+           (assoc {} :favorites)))
 
 (defn favorite-tracks->ls!
-  "Puts favorite tracks into localStorage"
+  "Writes favorite tracks into localStorage"
   [favorite-tracks]
   (.setItem js/localStorage lsk (str favorite-tracks)))     ;; sorted-map writen as an EDN map
