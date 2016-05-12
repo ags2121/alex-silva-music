@@ -41,7 +41,7 @@
              :active-panel                             (s/maybe s/Keyword)
              :active-project-id                        (s/maybe s/Keyword)
              :active-collection-id                     (s/maybe s/Keyword)
-             :active-track-id                          (s/maybe s/Keyword)})
+             :playing-track                            (s/maybe {:track-id s/Keyword :url s/Str :state s/Keyword :load? s/Bool})})
 
 ;; -- Default app-db Value  ---------------------------------------------------
 ;;
@@ -145,7 +145,7 @@
    :active-panel         nil
    :active-project-id    nil
    :active-collection-id nil
-   :active-track-id      nil
+   :playing-track        nil
    })
 
 (defn add-track-url [track-id track-data]

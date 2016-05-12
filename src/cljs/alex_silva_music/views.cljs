@@ -21,7 +21,7 @@
 ;;
 
 (defn track-link [track-data link-key]
-  [:div {:class (str (name link-key) " icon")
+  [:div {:class    (str (name link-key) " icon")
          :on-click #(.open js/window (-> track-data val link-key) "_blank")}
    [:img {:src (str "/assets/" (name link-key) ".png") :height 30 :width 30}]])
 
@@ -31,12 +31,16 @@
         is-favorite (subscribe [:is-favorite track-id])
         playing-track (subscribe [:playing-track])]
     (fn []
-      [:a.track {:class    (if (= track-id (:track-id @playing-track)) "selected")}
+      [:a.track {:class
+                 (if (= track-id (:track-id @playing-track))
+                   (if (= :play (:state @playing-track))
+                     "selected playing"
+                     "selected"))}
        [:span.track-name {:on-click #(dispatch [:set-playing-track track-id])}
         (if (nil? display-name) (id->name track-id) display-name)]
 
        (if (-> track-data val :score)
-         [track-link track-data :score] )
+         [track-link track-data :score])
 
        [:span {:class    (if @is-favorite "favorite" "not-favorite")
                :on-click #(dispatch [:toggle-track-favorited track-id])}
@@ -194,7 +198,7 @@
 
           (if @playing-track
             [:div
-             [:span.text "Now Playing: "]
+             [:span.text (str (if (= :play (:state @playing-track)) "Playing" "Paused") ": ")]
              [:span.text.italic (str "\"" (id->name (:track-id @playing-track)) "\"")]
              ])])})))
 
