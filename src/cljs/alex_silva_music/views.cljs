@@ -211,7 +211,7 @@
   [:div
    [:div.header
     [:h1
-     [:a {:href "#/"} "alex silva music"]]
+     [:a {:href "#/"} "Alex Silva Music"]]
     [track-player]]
    [:hr]
    [panels
