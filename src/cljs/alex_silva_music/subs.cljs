@@ -1,14 +1,16 @@
 (ns alex-silva-music.subs
-  (:require-macros [reagent.ratom :refer [reaction]])
-  (:require [re-frame.core :as re-frame]))
+  (:require [re-frame.core :as re-frame]
+            [schema.core :as s :include-macros true]
+            [alex-silva-music.db :as db])
+  (:require-macros [reagent.ratom :refer [reaction]]))
 
 ;; -- Helper functions ----------------------------------------------------------
 ;;
 ;;
 ;;
 
-(defn favorite-tracks
-  [db]
+(s/defn favorite-tracks :- [(s/map-entry s/Keyword db/Track)]
+  [db :- db/schema]
   (let [favorite-tracks-set (set (:favorites db))]
     (filter #(contains? favorite-tracks-set (-> % key)) (:tracks db))))
 
