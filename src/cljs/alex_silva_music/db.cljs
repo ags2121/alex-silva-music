@@ -15,6 +15,9 @@
 
 (def CollectionName (s/enum :recent-work :at-the-pheelharmonic :face-of-man))
 
+(def Collection {:credits               Credits
+                 (s/optional-key :year) s/Int})
+
 (def Track {:project                       (s/enum :face-of-man :compositions :personal-space)
             :soundcloud                    s/Str
             :url                           s/Str
@@ -198,7 +201,7 @@
 ;; store favorite tracks in local storage
 ;;
 
-(def lsk "alex-silva-music")                                ;; localstore key
+(def lsk "alex-silva-music")                                ; localstore key
 
 (defn ls->favorite-tracks
   "Read in favorite-tracks from LS, and process into a map that can merge into app-db."
@@ -210,4 +213,4 @@
 (defn favorite-tracks->ls!
   "Writes favorite tracks into localStorage"
   [favorite-tracks]
-  (.setItem js/localStorage lsk (str favorite-tracks)))     ;; sorted-map writen as an EDN map
+  (.setItem js/localStorage lsk (str favorite-tracks)))

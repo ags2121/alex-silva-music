@@ -46,9 +46,7 @@
                :on-click #(dispatch [:toggle-track-favorited track-id])}
         " ♥"]
 
-       [track-link track-data :soundcloud]
-
-       ])))
+       [track-link track-data :soundcloud]])))
 
 (defn resize-top [component top-state]
   (let [this-node (reagent/dom-node component)
@@ -92,9 +90,7 @@
 
                       [tracks
                        #(= collection-id @active-collection-id)
-                       (:tracks collection-data)]
-
-                      ])))])})))
+                       (:tracks collection-data)]])))])})))
 
 (defn projects [is-selected?]
   (let [active-project-id (subscribe [:active-project-id])
@@ -116,9 +112,7 @@
 
                       (if (= project-id :face-of-man)
                         [face-of-man-component is-selected?]
-                        [tracks is-selected? (db/get-tracks-by-project project-id)])
-                      ])
-                   ))])})))
+                        [tracks is-selected? (db/get-tracks-by-project project-id)])])))])})))
 
 (defn links-component [is-selected?]
   (let [links db/links
@@ -135,8 +129,10 @@
             [:li.link
              [:a {:href (val link) :target "_blank"}
               (let [link-name (id->name (key link))]
-                [:img {:src (str "/assets/" link-name ".png") :alt link-name :height 90 :width 90}])
-              ]])])})))
+                [:img {:src    (str "/assets/" link-name ".png")
+                       :alt    link-name
+                       :height 90
+                       :width  90}])]])])})))
 
 (defn bio [is-selected?]
   (let [top (reagent/atom 100)]
@@ -172,8 +168,7 @@
                         :href  (str "#/" (name panel-id))}
                     (id->name panel-id)]
 
-                   [panel-component #(= panel-id @active-panel)]
-                   ])))])))
+                   [panel-component #(= panel-id @active-panel)]])))])))
 
 (defn track-player []
   (let [playing-track (subscribe [:playing-track])
@@ -200,8 +195,7 @@
           (if @playing-track
             [:div
              [:span.text (str (if (= :play (:state @playing-track)) "Playing" "Paused") ": ")]
-             [:span.text.italic (str "\"" (id->name (:track-id @playing-track)) "\"")]
-             ])])})))
+             [:span.text.italic (str "\"" (id->name (:track-id @playing-track)) "\"")]])])})))
 
 (defn picture []
   (let [active-panel (subscribe [:active-panel])]

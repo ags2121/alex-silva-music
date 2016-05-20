@@ -14,12 +14,38 @@
   (if-let [problems (s/check a-schema db)]
     (throw (js/Error. (str "schema check failed: " problems)))))
 
-;; after an event handler has run, this middleware can check that
-;; the value in app-db still correctly matches the schema.
-(def check-schema-mw (after (partial check-and-throw schema)))
+(def check-schema-mw
+  "after an event handler has run, this middleware can check that the value in app-db still correctly matches the schema."
+  (after (partial check-and-throw schema)))
 
 ;; middleware to store todos into local storage
 (def ->ls (after favorite-tracks->ls!))
+
+;; -- Helper functions ----------------------------------------------------------
+;;
+;;
+;;
+
+(defn set-active-collection [current-collection-id [_ new-collection-id]]
+  (if (= current-collection-id new-collection-id)
+    nil
+    new-collection-id))
+
+(defn toggle-track-favorited [favorites [_ track-id]]
+  (dispatch [:track-favorite-toggled? true])
+  (if (some #(= track-id %) favorites)
+    (into [] (filter #(not (= % track-id)) favorites))
+    (conj favorites track-id)))
+
+(defn set-playing-track [current-playing-track-info [_ new-playing-track-id new-state]]
+  (if (= (:track-id current-playing-track-info) new-playing-track-id)
+    (assoc current-playing-track-info :state (if (= (:state current-playing-track-info) :play)
+                                               :pause
+                                               :play)
+                                      :load? false)
+    (let [track-url (-> default-db :tracks new-playing-track-id :url)
+          state (if new-state new-state :play)]
+      {:track-id new-playing-track-id :url track-url :state state :load? true})))
 
 ;; -- Handlers ----------------------------------------------------------
 ;;
@@ -47,32 +73,17 @@
 (register-handler
   :set-active-collection
   [check-schema-mw (path :active-collection-id)]
-  (fn [current-collection-id [_ new-collection-id]]
-    (if (= current-collection-id new-collection-id)
-      nil
-      new-collection-id)))
+  set-active-collection)
 
 (register-handler
   :toggle-track-favorited
   [check-schema-mw (path :favorites) ->ls]
-  (fn [favorites [_ track-id]]
-    (dispatch [:track-favorite-toggled? true])
-    (if (contains? (set favorites) track-id)
-      (into [] (filter #(not (= % track-id)) favorites))
-      (conj favorites track-id))))
+  toggle-track-favorited)
 
 (register-handler
   :set-playing-track
   [check-schema-mw (path :playing-track)]
-  (fn [current-playing-track-info [_ new-playing-track-id new-state]]
-    (if (= (:track-id current-playing-track-info) new-playing-track-id)
-      (assoc current-playing-track-info :state (if (= (:state current-playing-track-info) :play)
-                                                 :pause
-                                                 :play)
-                                        :load? false)
-      (let [track-url (-> default-db :tracks new-playing-track-id :url)
-            state (if new-state new-state :play)]
-        {:track-id new-playing-track-id :url track-url :state state :load? true}))))
+  set-playing-track)
 
 (register-handler
   :track-favorite-toggled?

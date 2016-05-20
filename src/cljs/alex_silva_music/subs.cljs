@@ -9,10 +9,17 @@
 ;;
 ;;
 
-(s/defn favorite-tracks :- [(s/map-entry s/Keyword db/Track)]
+(s/defn get-favorite-tracks :- [(s/map-entry s/Keyword db/Track)]
   [db :- db/schema]
   (let [favorite-tracks-set (set (:favorites db))]
     (filter #(contains? favorite-tracks-set (-> % key)) (:tracks db))))
+
+(s/defn get-collection :- (merge db/Collection {:tracks [(s/->MapEntry s/Keyword db/Track)]})
+  [db :- db/schema
+   collection-name :- db/CollectionName]
+  (let [collection-data (collection-name (:collections db))
+        tracks-for-collection (into [] (filter #(= (-> % val :collection) collection-name) (:tracks db)))]
+    (assoc collection-data :tracks tracks-for-collection)))
 
 ;; -- Subscription handlers and registration ----------------------------------------------------------
 ;;
@@ -22,10 +29,7 @@
 (re-frame/register-sub
   :collection
   (fn [db [_ collection-name]]
-    (let [collection-data (collection-name (:collections @db))
-          tracks-for-collection (into [] (filter #(= (-> % val :collection) collection-name) (:tracks @db)))
-          collection-data-with-tracks (assoc collection-data :tracks tracks-for-collection)]
-      (reaction collection-data-with-tracks))))
+    (reaction (get-collection @db collection-name))))
 
 (re-frame/register-sub
   :active-panel
@@ -55,7 +59,7 @@
 (re-frame/register-sub
   :favorite-tracks
   (fn [db _]
-    (reaction (favorite-tracks @db))))
+    (reaction (get-favorite-tracks @db))))
 
 (re-frame/register-sub
   :is-favorite
