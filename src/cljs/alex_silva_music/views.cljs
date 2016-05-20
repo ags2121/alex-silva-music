@@ -147,7 +147,8 @@
        (fn []
          [:div.bio-text {:class (if (is-selected?) "selected" "hidden")
                          :style {:top (str @top "px")}}
-          "Alex Silva is dope."])})))
+          [:div
+           "Alex Silva is " [:br.rwd-break2] "a Brooklyn-based " [:br.rwd-break] "music-maker and " [:br.rwd-break2] "programmer."]])})))
 
 (defn favorites-component [is-selected?]
   (let [favorite-tracks (subscribe [:favorite-tracks])]
