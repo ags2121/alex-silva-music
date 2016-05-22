@@ -181,7 +181,15 @@
                                        (.pause track-player))))]
     (reagent/create-class
       {:component-did-mount
-       toggle-audio-fn
+       (fn [this]
+         (toggle-audio-fn this)
+         (.addEventListener js/window "keyup" (fn [event]
+                                                (if (= 32 (.-keyCode event))
+                                                  (dispatch [:toggle-playing-track-state]))))
+         (.addEventListener js/window "keydown" (fn [event]
+                                                  (if (= 32 (.-keyCode event))
+                                                    (.preventDefault event))))) ; stop spacebar from scrolling window down
+
        :component-did-update
        toggle-audio-fn
        :reagent-render

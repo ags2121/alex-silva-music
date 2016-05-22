@@ -32,20 +32,22 @@
     new-collection-id))
 
 (defn toggle-track-favorited [favorites [_ track-id]]
-  (dispatch [:track-favorite-toggled? true])
+  (dispatch [:track-favorite-toggled? true])                ; how to assert that this function was called?
   (if (some #(= track-id %) favorites)
     (into [] (filter #(not (= % track-id)) favorites))
     (conj favorites track-id)))
 
-(defn set-playing-track [current-playing-track-info [_ new-playing-track-id new-state]]
+(defn toggle-playing-track-state [current-playing-track-info]
+  (assoc current-playing-track-info :state (if (= (:state current-playing-track-info) :play)
+                                             :pause
+                                             :play)
+                                    :load? false))
+
+(defn set-playing-track [current-playing-track-info [_ new-playing-track-id]]
   (if (= (:track-id current-playing-track-info) new-playing-track-id)
-    (assoc current-playing-track-info :state (if (= (:state current-playing-track-info) :play)
-                                               :pause
-                                               :play)
-                                      :load? false)
-    (let [track-url (-> default-db :tracks new-playing-track-id :url)
-          state (if new-state new-state :play)]
-      {:track-id new-playing-track-id :url track-url :state state :load? true})))
+    (toggle-playing-track-state current-playing-track-info)
+    (let [track-url (-> default-db :tracks new-playing-track-id :url)]
+      {:track-id new-playing-track-id :url track-url :state :play :load? true})))
 
 ;; -- Handlers ----------------------------------------------------------
 ;;
@@ -84,6 +86,13 @@
   :set-playing-track
   [check-schema-mw (path :playing-track)]
   set-playing-track)
+
+(register-handler
+  :toggle-playing-track-state
+  [check-schema-mw (path :playing-track)]
+  (fn [current-playing-track-info _]
+    (if current-playing-track-info
+      (toggle-playing-track-state current-playing-track-info))))
 
 (register-handler
   :track-favorite-toggled?
