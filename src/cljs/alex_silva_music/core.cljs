@@ -17,6 +17,4 @@
 (defn ^:export init [] 
   (routes/app-routes)
   (re-frame/dispatch-sync [:initialize-db])
-  (mount-root)
-  ;(re-frame/dispatch [:set-playing-track :planes nil]) ;todo: fix
-  )
+  (mount-root))

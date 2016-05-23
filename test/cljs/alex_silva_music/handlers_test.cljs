@@ -1,19 +1,10 @@
-(ns alex-silva-music.core-test
+(ns alex-silva-music.handlers-test
   (:require [cljs.test :refer-macros [deftest testing is use-fixtures]]
             [alex-silva-music.handlers :as h]
-            [alex-silva-music.subs :as s]
-            [alex-silva-music.core :as core]
             [alex-silva-music.db :as db]
             [schema.test :as st]))
 
-;; See README.md for instructions on how to run tests
-
 (use-fixtures :once st/validate-schemas)
-
-;; -- Handlers ----------------------------------------------------------
-;;
-;; 
-;;
 
 (def playing-track (db/PlayingTrack. :planes "url" :play true))
 
@@ -83,10 +74,3 @@
 (deftest set-playing-track-if-playing-new-track-then-set-load?-to-true
   (is (= true
          (:load? (h/set-playing-track playing-track [:set-playing-track :altiloquence])))))
-
-
-;; -- Subscriptions ----------------------------------------------------------
-;;
-;;
-;;
-
