@@ -94,7 +94,8 @@
                                :compiler
                                              {:output-to     "resources/public/js/compiled/testable.js"
                                               :main          alex-silva-music.runner
-                                              :optimizations :none}}}}}
+                                              :optimizations :none
+                                              :pretty-print  true}}}}}
 
              :uberjar
              {:source-paths ^:replace ["src/clj"]

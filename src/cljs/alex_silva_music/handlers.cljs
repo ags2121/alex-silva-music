@@ -1,7 +1,7 @@
 (ns alex-silva-music.handlers
   (:require [re-frame.core :refer [register-handler path dispatch after]]
-            [alex-silva-music.db :refer [default-db ls->favorite-tracks favorite-tracks->ls! schema]]
-            [schema.core :as s]))
+            [alex-silva-music.db :refer [default-db ls->favorite-tracks favorite-tracks->ls! schema PlayingTrack] :as db]
+            [schema.core :as s :include-macros true]))
 
 ;; -- Custom Middleware ----------------------------------------------------------
 ;;
@@ -31,23 +31,26 @@
     nil
     new-collection-id))
 
-(defn toggle-track-favorited [favorites [_ track-id]]
-  (dispatch [:track-favorite-toggled? true])                ; how to assert that this function was called?
-  (if (some #(= track-id %) favorites)
-    (into [] (filter #(not (= % track-id)) favorites))
-    (conj favorites track-id)))
+(defn toggle-track-favorited [db [_ track-id]]
+  (let [favorites (:favorites db)
+        updated-favorites (if (some #(= track-id %) favorites)
+                    (into [] (filter #(not (= % track-id)) favorites))
+                    (conj favorites track-id))]
+    (assoc db :favorites updated-favorites :track-favorite-toggled? true)))
 
-(defn toggle-playing-track-state [current-playing-track-info]
-  (assoc current-playing-track-info :state (if (= (:state current-playing-track-info) :play)
-                                             :pause
-                                             :play)
-                                    :load? false))
+(s/defn toggle-playing-track-state :- (s/maybe PlayingTrack)
+  [current-playing-track-info :- (s/maybe PlayingTrack) & _]
+  (if current-playing-track-info
+    (assoc current-playing-track-info :state (if (= (:state current-playing-track-info) :play)
+                                              :pause
+                                              :play)
+                                     :load? false)))
 
 (defn set-playing-track [current-playing-track-info [_ new-playing-track-id]]
   (if (= (:track-id current-playing-track-info) new-playing-track-id)
     (toggle-playing-track-state current-playing-track-info)
-    (let [track-url (-> default-db :tracks new-playing-track-id :url)]
-      {:track-id new-playing-track-id :url track-url :state :play :load? true})))
+    (let [track-url (get-in default-db [:tracks new-playing-track-id :url])]
+      (PlayingTrack. new-playing-track-id track-url :play true))))
 
 ;; -- Handlers ----------------------------------------------------------
 ;;
@@ -79,7 +82,7 @@
 
 (register-handler
   :toggle-track-favorited
-  [check-schema-mw (path :favorites) ->ls]
+  [check-schema-mw ->ls]
   toggle-track-favorited)
 
 (register-handler
@@ -90,12 +93,10 @@
 (register-handler
   :toggle-playing-track-state
   [check-schema-mw (path :playing-track)]
-  (fn [current-playing-track-info _]
-    (if current-playing-track-info
-      (toggle-playing-track-state current-playing-track-info))))
+  toggle-playing-track-state)
 
 (register-handler
-  :track-favorite-toggled?
+  :reset-track-favorite-toggled
   [check-schema-mw (path :track-favorite-toggled?)]
-  (fn [_ [_ new-state]]
-    new-state))
+  (fn [_ _]
+    false))

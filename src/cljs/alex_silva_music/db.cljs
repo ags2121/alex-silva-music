@@ -29,6 +29,12 @@
             (s/optional-key :performer)    s/Keyword
             })
 
+(s/defrecord PlayingTrack
+  [track-id :- s/Keyword
+   url :- s/Str
+   state :- (s/enum :play :pause)
+   load? :-  s/Bool])
+
 (def schema {:collections                              (s/conditional
                                                          #(instance? PersistentArrayMap %)
                                                          {CollectionName {:credits               Credits
@@ -44,26 +50,25 @@
              :active-panel                             (s/maybe s/Keyword)
              :active-project-id                        (s/maybe s/Keyword)
              :active-collection-id                     (s/maybe s/Keyword)
-             :playing-track                            (s/maybe {:track-id s/Keyword :url s/Str :state s/Keyword :load? s/Bool})})
+             :playing-track                            (s/maybe PlayingTrack)})
 
-;; -- Default app-db Value  ---------------------------------------------------
+;; -- "Private namespace vars" ----------------------------------------------------------
 ;;
-;; When the application first starts, this will be the value put in app-db. See the default-db fn
+;;
 ;;
 
-(def base-url "https://dl.dropboxusercontent.com/u/12514699/alex-silva-music/")
-(def base-score-url (str base-url "scores/"))
-(def base-music-url (str base-url "music/"))
-(def base-sc-url "https://soundcloud.com/faceofman/")
-
-(def face-of-man-quintet-creds
+(def ^:private base-url "https://dl.dropboxusercontent.com/u/12514699/alex-silva-music/")
+(def ^:private base-score-url (str base-url "scores/"))
+(def ^:private base-music-url (str base-url "music/"))
+(def ^:private base-sc-url "https://soundcloud.com/faceofman/")
+(def ^:private face-of-man-quintet-creds
   (array-map "Nick Bazzano" ["Alto Sax"]
              "Daro Behroozi" ["Bass Clarinet"]
              "Alex Silva" ["Guitar Electric"]
              "Charlie Hack" ["Double Bass"]
              "Jesse Chevan" ["Drums"]))
 
-(def base-db
+(def ^:private base-db
   {:collections          (array-map :recent-work {:credits (array-map "Alex Silva" ["vocals" "guitar"])}
 
                                     :at-the-pheelharmonic {:year    2012
@@ -151,7 +156,7 @@
    :playing-track        nil
    })
 
-(defn add-track-url [track-id track-data]
+(defn ^:private add-track-url [track-id track-data]
   (let [track-name (name track-id)
         [url sc-url score-url] (map #(str % track-name) [base-music-url base-sc-url base-score-url])
         has-score? (= (-> track-data :project) :compositions)
@@ -162,20 +167,21 @@
                             {}))]
     (merge track-data track-urls)))
 
-(defn add-track-urls [db]
+(defn ^:private add-track-urls [db]
   (reduce
     (fn [d track-id]
       (update-in d [:tracks track-id] #(add-track-url track-id %)))
     db
     (keys (:tracks base-db))))
 
-(def default-db
-  (add-track-urls base-db))
+;; -- Public API ----------------------------------------------------------
+;;
+;;
+;;
 
-;; -- API  ----------------------------------------------------------
-;;
-;;
-;;
+(def default-db
+  "When the application first starts, this will be the value assigned to the app-db re-frame atom."
+  (add-track-urls base-db))
 
 (defn get-collection-data [collection-id]
   (let [collection-data (collection-id (:collections default-db))
@@ -212,5 +218,5 @@
 
 (defn favorite-tracks->ls!
   "Writes favorite tracks into localStorage"
-  [favorite-tracks]
-  (.setItem js/localStorage lsk (str favorite-tracks)))
+  [db]
+  (.setItem js/localStorage lsk (str (:favorites db))))

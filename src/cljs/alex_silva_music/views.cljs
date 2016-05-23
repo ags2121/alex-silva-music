@@ -163,7 +163,7 @@
                                  (if (= panel-id @active-panel) " selected")
                                  (if (and (= :favorites panel-id) @track-favorite-toggled?)
                                    (do
-                                     (dispatch [:track-favorite-toggled? false])
+                                     (dispatch [:reset-track-favorite-toggled])
                                      " highlight")))
                         :href  (str "#/" (name panel-id))}
                     (id->name panel-id)]
@@ -188,7 +188,7 @@
                                                   (dispatch [:toggle-playing-track-state]))))
          (.addEventListener js/window "keydown" (fn [event]
                                                   (if (= 32 (.-keyCode event))
-                                                    (.preventDefault event))))) ; stop spacebar from scrolling window down
+                                                    (.preventDefault event))))) ; stop spacebar from scrolling
 
        :component-did-update
        toggle-audio-fn

@@ -13,6 +13,15 @@ Figwheel will automatically push cljs changes to the browser.
 
 Wait a bit, then browse to [http://localhost:3449](http://localhost:3449).
 
+OR
+
+If you're developing with Cursive:
+ - Select Edit Configurations
+ - Create a new local Clojure REPL Run/Debug Configuration
+ - Select the "clojure.main in normal JVM process" radio button option
+ - Enter "script/repl.clj" in parameters field
+ - Save and run the configuration
+
 ### Run tests:
 
 ```

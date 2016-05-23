@@ -64,9 +64,11 @@
 (re-frame/register-sub
   :is-favorite
   (fn [db [_ track-id]]
-    (reaction (->> @db :favorites (some #(= track-id %))))))
+    (reaction (->> @db
+                   :favorites
+                   (some #(= track-id %))))))
 
 (re-frame/register-sub
   :track-favorite-toggled?
   (fn [db _]
-    (reaction (-> @db :track-favorite-toggled?))))
+    (reaction (:track-favorite-toggled? @db))))
