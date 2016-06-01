@@ -6,7 +6,7 @@
 
 (use-fixtures :once st/validate-schemas)
 
-(def playing-track (db/PlayingTrack. :planes "url" :play true))
+(def playing-track (->db/PlayingTrack :planes "url" :play true))
 
 (deftest set-active-collection-when-same-collection-return-nil
   (is (= nil

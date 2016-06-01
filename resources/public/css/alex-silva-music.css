@@ -235,3 +235,15 @@ li a.playing {
         display: none;
     }
 }
+
+@media screen and (max-width: 690px) {
+    .alex {
+        top: 24rem;
+    }
+}
+
+@media screen and (max-width: 810px) {
+    h1 {
+        font-size: 13vw;
+    }
+}
