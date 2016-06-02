@@ -21,6 +21,14 @@
         tracks-for-collection (into [] (filter #(= (-> % val :collection) collection-name) (:tracks db)))]
     (assoc collection-data :tracks tracks-for-collection)))
 
+(s/defn is-favorite :- s/Bool
+  [db :- db/schema
+   track-id :- s/Keyword]
+  (->> db
+       :favorites
+       (some #(= track-id %))
+       boolean))
+
 ;; -- Subscription handlers and registration ----------------------------------------------------------
 ;;
 ;;
@@ -64,9 +72,7 @@
 (re-frame/register-sub
   :is-favorite
   (fn [db [_ track-id]]
-    (reaction (->> @db
-                   :favorites
-                   (some #(= track-id %))))))
+    (reaction (is-favorite @db track-id))))
 
 (re-frame/register-sub
   :track-favorite-toggled?

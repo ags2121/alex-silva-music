@@ -90,12 +90,17 @@
 
               :cljsbuild    {:builds
                              {:test
-                              {:source-paths ["src/cljs" "test/cljs"]
-                               :compiler
-                                             {:output-to     "resources/public/js/compiled/testable.js"
-                                              :main          alex-silva-music.runner
-                                              :optimizations :none
-                                              :pretty-print  true}}}}}
+                                         {:source-paths ["src/cljs" "test/cljs"]
+                                          :compiler
+                                                        {:output-to     "resources/public/js/compiled/testable.js"
+                                                         :main          alex-silva-music.runner
+                                                         :optimizations :none
+                                                         :pretty-print  true}}
+                              :node-test {:source-paths ["src" "test"]
+                                          :compiler     {:output-to  "target/testable.js"
+                                                         :output-dir "target"
+                                                         :main       alex-silva-music.runner
+                                                         :target     :nodejs}}}}}
 
              :uberjar
              {:source-paths ^:replace ["src/clj"]
