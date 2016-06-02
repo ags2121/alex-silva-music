@@ -5,10 +5,15 @@
             [ring.middleware.gzip :refer [wrap-gzip]]
             [ring.middleware.logger :refer [wrap-with-logger]]
             [environ.core :refer [env]]
-            [ring.adapter.jetty :refer [run-jetty]])
+            [ring.adapter.jetty :refer [run-jetty]]
+            [clojure.java.io :as io])
   (:gen-class))
 
 (defroutes routes
+           (GET "/" _
+             {:status  200
+              :headers {"Content-Type" "text/html; charset=utf-8"}
+              :body    (io/input-stream (io/resource "public/index.html"))})
            (resources "/"))
 
 (def http-handler

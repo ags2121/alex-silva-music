@@ -128,11 +128,10 @@
             ^{:key (key link)}
             [:li.link
              [:a {:href (val link) :target "_blank"}
-              (let [link-name (id->name (key link))]
-                [:img {:src    (str "/assets/" link-name ".png")
-                       :alt    link-name
-                       :height 90
-                       :width  90}])]])])})))
+              [:img {:src    (str "/assets/" (key link) ".png")
+                     :alt    (id->name (key link))
+                     :height 90
+                     :width  90}]]])])})))
 
 (defn bio [is-selected?]
   (let [top (reagent/atom 100)]

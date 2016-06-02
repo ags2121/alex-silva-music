@@ -105,7 +105,6 @@
              :uberjar
              {:source-paths ^:replace ["src/clj"]
               :hooks        [leiningen.cljsbuild]
-              :env {:production true}
               :omit-source  true
               :aot          :all
               :main         alex-silva-music.server
