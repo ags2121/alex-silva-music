@@ -128,7 +128,7 @@
             ^{:key (key link)}
             [:li.link
              [:a {:href (val link) :target "_blank"}
-              [:img {:src    (str "/assets/" (key link) ".png")
+              [:img {:src    (str "/assets/" (name (key link)) ".png")
                      :alt    (id->name (key link))
                      :height 90
                      :width  90}]]])])})))
