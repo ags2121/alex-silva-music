@@ -3,8 +3,8 @@
             [clojure.string :as str :refer [replace capitalize]]
             [reagent.core :as reagent :refer [atom dom-node]]
             [alex-silva-music.db :as db]
-            ;[goog.dom]
-            ;[goog.object]
+            [goog.dom]
+            [goog.object]
             ))
 
 ;; -- Helper functions ----------------------------------------------------------
