@@ -2,7 +2,9 @@
   (:require [re-frame.core :refer [subscribe dispatch]]
             [clojure.string :as str :refer [replace capitalize]]
             [reagent.core :as reagent :refer [atom dom-node]]
-            [alex-silva-music.db :as db]))
+            [alex-silva-music.db :as db]
+            [goog.dom]
+            [goog.object]))
 
 ;; -- Helper functions ----------------------------------------------------------
 ;;
@@ -22,12 +24,13 @@
 
 (defn track-link [track-data link-key]
   [:div {:class    (str (name link-key) " icon")
-         :on-click #(.open js/window (-> track-data val link-key) "_blank")}
+         :on-click #(.open js/window (link-key track-data) "_blank")}
    [:img {:src (str "/assets/" (name link-key) ".png") :height 30 :width 30}]])
 
 (defn track [track-data]
   (let [track-id (key track-data)
-        display-name (-> track-data val :display-name)
+        track-data (val track-data)
+        display-name (:display-name track-data)
         is-favorite (subscribe [:is-favorite track-id])
         playing-track (subscribe [:playing-track])]
     (fn []
@@ -36,10 +39,10 @@
                    (if (= :play (:state @playing-track))
                      "selected playing"
                      "selected"))}
-       [:span.track-name {:on-click #(dispatch [:set-playing-track track-id])}
+       [:span.track-name {:on-click #(dispatch [:set-playing-track track-id]) :value (:url track-data)}
         (if (nil? display-name) (id->name track-id) display-name)]
 
-       (if (-> track-data val :score)
+       (if (:score track-data)
          [track-link track-data :score])
 
        [:span {:class    (if @is-favorite "favorite" "not-favorite")
@@ -181,16 +184,43 @@
     (reagent/create-class
       {:component-did-mount
        (fn [this]
-         (toggle-audio-fn this)
-         (.addEventListener js/window "keyup" (fn [event]
-                                                (if (= 32 (.-keyCode event))
-                                                  (dispatch [:toggle-playing-track-state]))))
-         (.addEventListener js/window "keydown" (fn [event]
+         ;(toggle-audio-fn this)
+         (let [track-player (.querySelector (reagent/dom-node this) "audio")]
+           (.addEventListener js/window "keyup" (fn [event]
                                                   (if (= 32 (.-keyCode event))
-                                                    (.preventDefault event))))) ; stop spacebar from scrolling
+                                                    (do
+                                                      (dispatch [:toggle-playing-track-state])
+                                                      (if (.-paused track-player)
+                                                        (.play track-player)
+                                                        (.pause track-player))))))
 
-       :component-did-update
-       toggle-audio-fn
+           (.addEventListener js/window "keydown" (fn [event]
+                                                    (if (= 32 (.-keyCode event))
+                                                      (.preventDefault event)))) ; stop spacebar from scrolling
+
+           (let [track-components (goog.dom/getElementsByTagNameAndClass "span" "track-name")]
+             (goog.object/forEach track-components
+                                  (fn [val key _]
+                                    (if (.hasOwnProperty track-components key)
+                                      (.addEventListener val "click" (fn [e]
+                                                                       (let [audio-source (.querySelector track-player "source")
+                                                                             clicked-track-url (-> e .-target (.getAttribute "value"))
+                                                                             clicked-same-track? (and (not (.-ended track-player))
+                                                                                                      (< 0 (.-currentTime track-player))
+                                                                                                      (= clicked-track-url (.getAttribute audio-source "src")))]
+                                                                         (.preventDefault e)
+                                                                         (if clicked-same-track?
+                                                                           (if (.-paused track-player)
+                                                                             (.play track-player)
+                                                                             (.pause track-player))
+                                                                           (do
+                                                                             (.setAttribute audio-source "src" clicked-track-url)
+                                                                             (.pause track-player)
+                                                                             (.load track-player)
+                                                                             (aset track-player "oncanplaythrough" (.play track-player)))))))))))))
+
+       ;:component-did-update
+       ;toggle-audio-fn
        :reagent-render
        (fn []
          [:div.now-playing
