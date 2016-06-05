@@ -2,10 +2,7 @@
   (:require [re-frame.core :refer [subscribe dispatch]]
             [clojure.string :as str :refer [replace capitalize]]
             [reagent.core :as reagent :refer [atom dom-node]]
-            [alex-silva-music.db :as db]
-            [goog.dom :as dom]
-            [goog.object :as object]
-            ))
+            [alex-silva-music.db :as db]))
 
 ;; -- Helper functions ----------------------------------------------------------
 ;;
@@ -199,11 +196,9 @@
                                                     (if (= 32 (.-keyCode event))
                                                       (.preventDefault event)))) ; stop spacebar from scrolling
 
-           (let [track-components (dom/getElementsByTagNameAndClass "span" "track-name")]
-             (object/forEach track-components
-                                  (fn [val key _]
-                                    (if (.hasOwnProperty track-components key)
-                                      (.addEventListener val "click" (fn [e]
+           (let [track-components (.querySelectorAll js/document "span.track-name")]
+             (dotimes [i (.-length track-components)]
+               (.addEventListener (.item track-components i) "click" (fn [e]
                                                                        (let [audio-source (.querySelector track-player "source")
                                                                              clicked-track-url (-> e .-target (.getAttribute "value"))
                                                                              clicked-same-track? (and (not (.-ended track-player))
@@ -219,7 +214,6 @@
                                                                              (.pause track-player)
                                                                              (.load track-player)
                                                                              (aset track-player "oncanplaythrough" (.play track-player)))))))))))
-           ))
 
        ;:component-did-update
        ;toggle-audio-fn
