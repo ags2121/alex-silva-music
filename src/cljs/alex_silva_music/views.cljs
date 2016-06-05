@@ -178,7 +178,7 @@
                                          (if (:load? @playing-track)
                                            (.load track-player))
                                          (.play track-player))
-                                       (.pause track-player))))]
+                                       (.pause track-player))))] ; for toggling audio using reframe event system
     (reagent/create-class
       {:component-did-mount
        (fn [this]
@@ -196,6 +196,8 @@
                                                     (if (= 32 (.-keyCode event))
                                                       (.preventDefault event)))) ; stop spacebar from scrolling
 
+           ;; mobile browsers will only direct user actions to trigger audio load
+           ;; so we have to bypass reframe for now in order to satisfy that :(
            (let [track-components (.querySelectorAll js/document "span.track-name")]
              (dotimes [i (.-length track-components)]
                (.addEventListener (.item track-components i) "click" (fn [e]
