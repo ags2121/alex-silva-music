@@ -3,8 +3,9 @@
             [clojure.string :as str :refer [replace capitalize]]
             [reagent.core :as reagent :refer [atom dom-node]]
             [alex-silva-music.db :as db]
-            [goog.dom]
-            [goog.object]))
+            ;[goog.dom]
+            ;[goog.object]
+            ))
 
 ;; -- Helper functions ----------------------------------------------------------
 ;;
@@ -198,26 +199,27 @@
                                                     (if (= 32 (.-keyCode event))
                                                       (.preventDefault event)))) ; stop spacebar from scrolling
 
-           (let [track-components (goog.dom/getElementsByTagNameAndClass "span" "track-name")]
-             (goog.object/forEach track-components
-                                  (fn [val key _]
-                                    (if (.hasOwnProperty track-components key)
-                                      (.addEventListener val "click" (fn [e]
-                                                                       (let [audio-source (.querySelector track-player "source")
-                                                                             clicked-track-url (-> e .-target (.getAttribute "value"))
-                                                                             clicked-same-track? (and (not (.-ended track-player))
-                                                                                                      (< 0 (.-currentTime track-player))
-                                                                                                      (= clicked-track-url (.getAttribute audio-source "src")))]
-                                                                         (.preventDefault e)
-                                                                         (if clicked-same-track?
-                                                                           (if (.-paused track-player)
-                                                                             (.play track-player)
-                                                                             (.pause track-player))
-                                                                           (do
-                                                                             (.setAttribute audio-source "src" clicked-track-url)
-                                                                             (.pause track-player)
-                                                                             (.load track-player)
-                                                                             (aset track-player "oncanplaythrough" (.play track-player)))))))))))))
+           ;(let [track-components (goog.dom/getElementsByTagNameAndClass "span" "track-name")]
+           ;  (goog.object/forEach track-components
+           ;                       (fn [val key _]
+           ;                         (if (.hasOwnProperty track-components key)
+           ;                           (.addEventListener val "click" (fn [e]
+           ;                                                            (let [audio-source (.querySelector track-player "source")
+           ;                                                                  clicked-track-url (-> e .-target (.getAttribute "value"))
+           ;                                                                  clicked-same-track? (and (not (.-ended track-player))
+           ;                                                                                           (< 0 (.-currentTime track-player))
+           ;                                                                                           (= clicked-track-url (.getAttribute audio-source "src")))]
+           ;                                                              (.preventDefault e)
+           ;                                                              (if clicked-same-track?
+           ;                                                                (if (.-paused track-player)
+           ;                                                                  (.play track-player)
+           ;                                                                  (.pause track-player))
+           ;                                                                (do
+           ;                                                                  (.setAttribute audio-source "src" clicked-track-url)
+           ;                                                                  (.pause track-player)
+           ;                                                                  (.load track-player)
+           ;                                                                  (aset track-player "oncanplaythrough" (.play track-player)))))))))))
+           ))
 
        ;:component-did-update
        ;toggle-audio-fn
