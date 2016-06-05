@@ -10,7 +10,9 @@
                  [reagent "0.5.1"]
                  [re-frame "0.6.0" :exclusions [org.clojure/clojurescript]]
                  [secretary "1.2.3"]
-                 [prismatic/schema "1.1.1"]]
+                 [prismatic/schema "1.1.1"]
+                 [overtone/at-at "1.2.0"]
+                 [http-kit "2.1.18"]]
 
   :plugins [[lein-cljsbuild "1.1.0"]
             [lein-environ "1.0.1"]]
