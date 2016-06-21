@@ -147,6 +147,10 @@ h1 a {
     visibility: hidden;
 }
 
+.hidden .fb-like {
+    display: none;
+}
+
 .panels {
     font-size: 2.5rem;
     text-align: center;
@@ -226,6 +230,10 @@ li a.playing {
     position: absolute;
     left: 0;
     right: 0;
+}
+
+.fb-like {
+    margin-top: 0.8em;
 }
 
 @media screen and (min-width: 1025px) {

@@ -138,15 +138,23 @@
   (let [top (reagent/atom 100)]
     (reagent/create-class
       {:component-did-mount
-       (fn [this] (resize-top this top))
+       (fn [this]
+         (resize-top this top)
+         )
        :reagent-render
        (fn []
          [:div.bio-text {:class (if (is-selected?) "selected" "hidden")
                          :style {:top (str @top "px")}}
-          [:div
-           "Alex Silva is " [:br.rwd-break2] "a Brooklyn-based " [:br.rwd-break] "music-maker and " [:br.rwd-break2] "programmer."]
+          [:div "Alex Silva is " [:br.rwd-break2] "a Brooklyn-based " [:br.rwd-break] "music-maker and " [:br.rwd-break2] "programmer."]
           [:br]
-          [:div "Alex Silva 88 {At} " [:br.rwd-break2] "Gmail {Dot} Com"]])})))
+          [:div "Alex Silva 88 {At} " [:br.rwd-break2] "Gmail {Dot} Com"]
+          [:div {:class       "fb-like"
+                 :data-href   "https://www.facebook.com/faceofmanband/"
+                 :data-width  "200"
+                 :data-layout "standard"
+                 :data-action "like"
+                 :data-show-faces "false"
+                 :data-share "false"}]])})))
 
 (defn favorites-component [is-selected?]
   (let [favorite-tracks (subscribe [:favorite-tracks])]
