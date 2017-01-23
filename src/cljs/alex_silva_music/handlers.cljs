@@ -1,7 +1,8 @@
 (ns alex-silva-music.handlers
   (:require [re-frame.core :refer [register-handler path dispatch after]]
-            [alex-silva-music.db :refer [default-db ls->favorite-tracks favorite-tracks->ls! schema PlayingTrack] :as db]
-            [schema.core :as s :include-macros true]))
+            [alex-silva-music.db :refer [default-db ls->favorite-tracks favorite-tracks->ls! schema PlayingTrack]]
+            [schema.core :as s :include-macros true]
+            [alex-silva-music.views :refer [id->name]]))
 
 ;; -- Custom Middleware ----------------------------------------------------------
 ;;
@@ -51,7 +52,7 @@
     (toggle-playing-track-state current-playing-track-info)
     (let [track-url (get-in default-db [:tracks new-playing-track-id :url])
           track-display-name (get-in default-db [:tracks new-playing-track-id :display-name])]
-      (PlayingTrack. new-playing-track-id track-url :play true track-display-name))))
+      (PlayingTrack. new-playing-track-id track-url :play true (or track-display-name (id->name new-playing-track-id))))))
 
 ;; -- Handlers ----------------------------------------------------------
 ;;
