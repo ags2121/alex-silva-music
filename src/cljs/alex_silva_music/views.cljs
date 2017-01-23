@@ -246,7 +246,10 @@
           (if @playing-track
             [:div
              [:span.text (str (if (= :play (:state @playing-track)) "Playing" "Paused") ": ")]
-             [:span.text.italic (str "\"" (id->name (:track-id @playing-track)) "\"")]])])})))
+             [:span.text.italic (str "\""
+                                     (or (:display-name @playing-track)
+                                         (id->name (:track-id @playing-track)))
+                                     "\"")]])])})))
 
 (defn picture []
   (let [active-panel (subscribe [:active-panel])]

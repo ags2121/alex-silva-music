@@ -49,8 +49,9 @@
 (defn set-playing-track [current-playing-track-info [_ new-playing-track-id]]
   (if (= (:track-id current-playing-track-info) new-playing-track-id)
     (toggle-playing-track-state current-playing-track-info)
-    (let [track-url (get-in default-db [:tracks new-playing-track-id :url])]
-      (PlayingTrack. new-playing-track-id track-url :play true))))
+    (let [track-url (get-in default-db [:tracks new-playing-track-id :url])
+          track-display-name (get-in default-db [:tracks new-playing-track-id :display-name])]
+      (PlayingTrack. new-playing-track-id track-url :play true track-display-name))))
 
 ;; -- Handlers ----------------------------------------------------------
 ;;

@@ -34,7 +34,8 @@
   [track-id :- s/Keyword
    url :- s/Str
    state :- (s/enum :play :pause)
-   load? :- s/Bool])
+   load? :- s/Bool
+   display-name :- s/Str])
 
 (def schema {:collections                              (s/conditional
                                                          #(instance? PersistentArrayMap %)
