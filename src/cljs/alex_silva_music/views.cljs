@@ -151,7 +151,7 @@
                          :style {:top (str @top "px")}}
           [:div "Alex Silva is " [:br.rwd-break2] "a Brooklyn-based " [:br.rwd-break] "musician."]
           [:div "He records and performs " [:br.rwd-break2] "as Face of Man "]
-          [:div "and is also a member of " [:br.rwd-break2] "the band Personal Space."]
+          [:div "and is also a member of " [:br.rwd-break2] "the band " [:a {:href "http://personalspacetheband.com" :target "_blank"} "Personal Space"] "."]
           [:br]
           [:div "Alex Silva 88 {At} " [:br.rwd-break2] "Gmail {Dot} Com"]
           [:div {:class           "fb-like"

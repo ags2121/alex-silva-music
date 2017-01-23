@@ -232,6 +232,10 @@ li a.playing {
     right: 0;
 }
 
+.bio-text a {
+    text-decoration: none;
+}
+
 .fb-like {
     margin-top: 0.8em;
 }
