@@ -20,9 +20,9 @@
 ;;
 ;;
 
-(defn track-link [track-data link-key]
+(defn track-link [track-url link-key]
   [:div {:class    (str (name link-key) " icon")
-         :on-click #(.open js/window (link-key track-data) "_blank")}
+         :on-click #(.open js/window track-url "_blank")}
    [:img {:src (str "/assets/" (name link-key) ".png") :height 30 :width 30}]])
 
 (defn track [track-data]
@@ -41,13 +41,17 @@
         (if (nil? display-name) (id->name track-id) display-name)]
 
        (if (:score track-data)
-         [track-link track-data :score])
+         [track-link (:score track-data) :score])
 
        [:span {:class    (if @is-favorite "favorite" "not-favorite")
                :on-click #(dispatch [:toggle-track-favorited track-id])}
         " ♥"]
 
-       [track-link track-data :soundcloud]])))
+       [track-link
+        (if (= :personal-space (:project track-data))
+          (:soundcloud-ps track-data)
+          (:soundcloud track-data))
+        :soundcloud]])))
 
 (defn resize-top [component top-state]
   (let [this-node (reagent/dom-node component)
@@ -145,16 +149,18 @@
        (fn []
          [:div.bio-text {:class (if (is-selected?) "selected" "hidden")
                          :style {:top (str @top "px")}}
-          [:div "Alex Silva is " [:br.rwd-break2] "a Brooklyn-based " [:br.rwd-break] "music-maker and " [:br.rwd-break2] "programmer."]
+          [:div "Alex Silva is " [:br.rwd-break2] "a Brooklyn-based " [:br.rwd-break] "musician."]
+          [:div "He records and performs " [:br.rwd-break2] "as Face of Man "]
+          [:div "and is also a member of " [:br.rwd-break2] "the band Personal Space."]
           [:br]
           [:div "Alex Silva 88 {At} " [:br.rwd-break2] "Gmail {Dot} Com"]
-          [:div {:class       "fb-like"
-                 :data-href   "https://www.facebook.com/faceofmanband/"
-                 :data-width  "200"
-                 :data-layout "standard"
-                 :data-action "like"
+          [:div {:class           "fb-like"
+                 :data-href       "https://www.facebook.com/faceofmanband/"
+                 :data-width      "200"
+                 :data-layout     "standard"
+                 :data-action     "like"
                  :data-show-faces "false"
-                 :data-share "false"}]])})))
+                 :data-share      "false"}]])})))
 
 (defn favorites-component [is-selected?]
   (let [favorite-tracks (subscribe [:favorite-tracks])]

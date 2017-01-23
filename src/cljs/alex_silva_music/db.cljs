@@ -18,22 +18,23 @@
 (def Collection {:credits               Credits
                  (s/optional-key :year) s/Int})
 
-(def Track {:project                       (s/enum :face-of-man :compositions :personal-space)
-            :soundcloud                    s/Str
-            :url                           s/Str
-            (s/optional-key :score)        s/Str
-            (s/optional-key :display-name) s/Str
-            (s/optional-key :collection)   CollectionName
-            (s/optional-key :year)         s/Int
-            (s/optional-key :credits)      Credits
-            (s/optional-key :performer)    s/Keyword
+(def Track {:project                        (s/enum :face-of-man :compositions :personal-space)
+            :soundcloud                     s/Str
+            :url                            s/Str
+            (s/optional-key :score)         s/Str
+            (s/optional-key :display-name)  s/Str
+            (s/optional-key :collection)    CollectionName
+            (s/optional-key :year)          s/Int
+            (s/optional-key :credits)       Credits
+            (s/optional-key :performer)     s/Keyword
+            (s/optional-key :soundcloud-ps) s/Str
             })
 
 (s/defrecord PlayingTrack
   [track-id :- s/Keyword
    url :- s/Str
    state :- (s/enum :play :pause)
-   load? :-  s/Bool])
+   load? :- s/Bool])
 
 (def schema {:collections                              (s/conditional
                                                          #(instance? PersistentArrayMap %)
@@ -57,10 +58,10 @@
 ;;
 ;;
 
-(def ^:private base-url "https://dl.dropboxusercontent.com/u/12514699/alex-silva-music/")
-(def ^:private base-score-url (str base-url "scores/"))
-(def ^:private base-music-url (str base-url "music/"))
+(def ^:private base-score-url "/scores/")
+(def ^:private base-music-url "/music/")
 (def ^:private base-sc-url "https://soundcloud.com/faceofman/")
+(def ^:private base-ps-sc-url "https://soundcloud.com/tinyengines/personal-space-")
 (def ^:private face-of-man-quintet-creds
   (array-map "Nick Bazzano" ["Alto Sax"]
              "Daro Behroozi" ["Bass Clarinet"]
@@ -84,7 +85,9 @@
                                                                       "Coleman Moore" ["mixing engineer" "drum programming on \"A Sharper Image\""]
                                                                       "Jojo Samuels" ["lady vocals on \"Future Half\""])})
 
-   :tracks               (array-map :planes {:collection :recent-work
+   :tracks               (array-map :pass-dat {:collection :recent-work
+                                               :project    :face-of-man}
+                                    :planes {:collection :recent-work
                                              :project    :face-of-man}
 
                                     :bouquet {:collection :recent-work
@@ -141,7 +144,11 @@
                                                                           "Miranda Cuckson" ["violin"]
                                                                           "Sumire Kudo" ["cello"]
                                                                           "Steve Beck" ["piano"]
-                                                                          "Carl Christian Bettendorf" ["conductor"])})
+                                                                          "Carl Christian Bettendorf" ["conductor"])}
+                                    :02-offering {:display-name "Offering"
+                                                  :project      :personal-space}
+                                    :a-weekend-with-the-horse-head {:display-name "The Horse Head"
+                                                                    :project      :personal-space})
 
    :links                (array-map :soundcloud base-sc-url
                                     :spotify "https://player.spotify.com/artist/6FMeK8Rk2ZAATsnr6qd4XP"
@@ -149,7 +156,7 @@
                                     :facebook "https://www.facebook.com/faceofmanband/"
                                     :twitter "https://twitter.com/faceofmanband"
                                     :itunes "https://itunes.apple.com/us/artist/face-of-man/id441404508")
-   :favorites            [:planes :like-devils-fly :ethnopoetics :la-chat-roulette :i-dalliance]
+   :favorites            [:pass-dat :like-devils-fly :ethnopoetics :la-chat-roulette :i-dalliance :a-weekend-with-the-horse-head]
    :active-panel         nil
    :active-project-id    nil
    :active-collection-id nil
@@ -158,10 +165,11 @@
 
 (defn ^:private add-track-url [track-id track-data]
   (let [track-name (name track-id)
-        [url sc-url score-url] (map #(str % track-name) [base-music-url base-sc-url base-score-url])
+        [url sc-url score-url ps-sc-url] (map #(str % track-name) [base-music-url base-sc-url base-score-url base-ps-sc-url])
         has-score? (= (-> track-data :project) :compositions)
-        track-urls (merge {:soundcloud sc-url
-                           :url        (str url ".mp3")}
+        track-urls (merge {:soundcloud    sc-url
+                           :url           (str url ".mp3")
+                           :soundcloud-ps ps-sc-url}
                           (if has-score?
                             {:score (str score-url ".pdf")}
                             {}))]
