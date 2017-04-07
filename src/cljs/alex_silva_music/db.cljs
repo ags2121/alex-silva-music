@@ -87,8 +87,7 @@
                                                                       "Coleman Moore" ["mixing engineer" "drum programming on \"A Sharper Image\""]
                                                                       "Jojo Samuels" ["lady vocals on \"Future Half\""])})
 
-   :tracks               (array-map :pass-dat {:collection :recent-work
-                                               :project    :face-of-man}
+   :tracks               (array-map ; :pass-dat {:collection :recent-work :project    :face-of-man}
                                     :planes {:collection :recent-work
                                              :project    :face-of-man}
 
