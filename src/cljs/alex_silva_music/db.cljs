@@ -87,7 +87,9 @@
                                                                       "Coleman Moore" ["mixing engineer" "drum programming on \"A Sharper Image\""]
                                                                       "Jojo Samuels" ["lady vocals on \"Future Half\""])})
 
-   :tracks               (array-map ; :pass-dat {:collection :recent-work :project    :face-of-man}
+   :tracks               (array-map :im-a-flirt {:collection :recent-work 
+                                                 :project    :face-of-man 
+                                                 :display-name "I'm a Flirt"}
                                     :planes {:collection :recent-work
                                              :project    :face-of-man}
 
@@ -157,7 +159,7 @@
                                     :facebook "https://www.facebook.com/faceofmanband/"
                                     :twitter "https://twitter.com/faceofmanband"
                                     :itunes "https://itunes.apple.com/us/artist/face-of-man/id441404508")
-   :favorites            [:planes :like-devils-fly :ethnopoetics :la-chat-roulette :i-dalliance :a-weekend-with-the-horse-head]
+   :favorites            [:im-a-flirt :like-devils-fly :ethnopoetics :la-chat-roulette :i-dalliance :a-weekend-with-the-horse-head]
    :active-panel         nil
    :active-project-id    nil
    :active-collection-id nil
