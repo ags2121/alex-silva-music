@@ -47,11 +47,10 @@
                :on-click #(dispatch [:toggle-track-favorited track-id])}
         " ♥"]
 
-       [track-link
-        (if (= :personal-space (:project track-data))
-          (:soundcloud-ps track-data)
-          (:soundcloud track-data))
-        :soundcloud]])))
+       (apply track-link (if (:soundcloud track-data)
+                           [(:soundcloud track-data) :soundcloud]
+                           [(:bandcamp track-data) :bandcamp]))
+       ])))
 
 (defn resize-top [component top-state]
   (let [this-node (reagent/dom-node component)

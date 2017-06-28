@@ -13,21 +13,22 @@
     #(instance? PersistentArrayMap %)
     {s/Str [s/Str]}))
 
-(def CollectionName (s/enum :recent-work :at-the-pheelharmonic :face-of-man))
+(def CollectionName (s/enum :bouquet :at-the-pheelharmonic :face-of-man :covers))
 
-(def Collection {:credits               Credits
-                 (s/optional-key :year) s/Int})
+(def Collection {(s/optional-key :credits) Credits
+                 (s/optional-key :year)    s/Int})
 
-(def Track {:project                        (s/enum :face-of-man :compositions :personal-space)
-            :soundcloud                     s/Str
-            :url                            s/Str
-            (s/optional-key :score)         s/Str
-            (s/optional-key :display-name)  s/Str
-            (s/optional-key :collection)    CollectionName
-            (s/optional-key :year)          s/Int
-            (s/optional-key :credits)       Credits
-            (s/optional-key :performer)     s/Keyword
-            (s/optional-key :soundcloud-ps) s/Str
+(def Track {:project                       (s/enum :face-of-man :compositions :personal-space)
+            :url                           s/Str
+            (s/optional-key :soundcloud)   s/Str
+            (s/optional-key :bandcamp)     s/Str
+            (s/optional-key :bandcamp-ps)  s/Str
+            (s/optional-key :score)        s/Str
+            (s/optional-key :display-name) s/Str
+            (s/optional-key :collection)   CollectionName
+            (s/optional-key :year)         s/Int
+            (s/optional-key :credits)      Credits
+            (s/optional-key :performer)    s/Keyword
             })
 
 (s/defrecord PlayingTrack
@@ -39,8 +40,8 @@
 
 (def schema {:collections                              (s/conditional
                                                          #(instance? PersistentArrayMap %)
-                                                         {CollectionName {:credits               Credits
-                                                                          (s/optional-key :year) s/Int}})
+                                                         {CollectionName {(s/optional-key :credits) Credits
+                                                                          (s/optional-key :year)    s/Int}})
              :tracks                                   (s/conditional
                                                          #(instance? PersistentArrayMap %)
                                                          {s/Keyword Track})
@@ -63,7 +64,8 @@
 (def ^:private base-score-url (str base-url "scores/"))
 (def ^:private base-music-url (str base-url "music/"))
 (def ^:private base-sc-url "https://soundcloud.com/faceofman/")
-(def ^:private base-ps-sc-url "https://soundcloud.com/tinyengines/personal-space-")
+(def ^:private base-bc-url "https://faceofman.bandcamp.com/")
+(def ^:private base-ps-bc-url "https://personalspaceband.bandcamp.com/")
 (def ^:private face-of-man-quintet-creds
   (array-map "Nick Bazzano" ["Alto Sax"]
              "Daro Behroozi" ["Bass Clarinet"]
@@ -72,7 +74,9 @@
              "Jesse Chevan" ["Drums"]))
 
 (def ^:private base-db
-  {:collections          (array-map :recent-work {:credits (array-map "Alex Silva" ["vocals" "guitar"])}
+  {:collections          (array-map :bouquet {:year 2017}
+
+                                    :covers {:credits (array-map "Alex Silva" ["vocals" "guitar"])}
 
                                     :at-the-pheelharmonic {:year    2012
                                                            :credits (array-map "Alex Silva" ["lead vocals" "guitar" "synths" "electronics"]
@@ -87,14 +91,21 @@
                                                                       "Coleman Moore" ["mixing engineer" "drum programming on \"A Sharper Image\""]
                                                                       "Jojo Samuels" ["lady vocals on \"Future Half\""])})
 
-   :tracks               (array-map :im-a-flirt {:collection :recent-work 
-                                                 :project    :face-of-man 
-                                                 :display-name "I'm a Flirt"}
-                                    :planes {:collection :recent-work
-                                             :project    :face-of-man}
+   :tracks               (array-map :lavender {:collection :bouquet
+                                               :project    :face-of-man}
 
-                                    :bouquet {:collection :recent-work
-                                              :project    :face-of-man}
+                                    :same-dream {:collection :bouquet
+                                                 :project    :face-of-man}
+
+                                    :her-vernacular {:collection :bouquet
+                                                     :project    :face-of-man}
+
+                                    :im-a-flirt {:collection   :covers
+                                                 :project      :face-of-man
+                                                 :display-name "I'm a Flirt"}
+
+                                    :planes {:collection :covers
+                                             :project    :face-of-man}
 
                                     :like-devils-fly {:collection :at-the-pheelharmonic
                                                       :project    :face-of-man}
@@ -148,18 +159,17 @@
                                                                           "Sumire Kudo" ["cello"]
                                                                           "Steve Beck" ["piano"]
                                                                           "Carl Christian Bettendorf" ["conductor"])}
-                                    :02-offering {:display-name "Offering"
-                                                  :project      :personal-space}
+                                    :offering {:project :personal-space}
                                     :a-weekend-with-the-horse-head {:display-name "The Horse Head"
                                                                     :project      :personal-space})
 
    :links                (array-map :soundcloud base-sc-url
                                     :spotify "https://player.spotify.com/artist/6FMeK8Rk2ZAATsnr6qd4XP"
-                                    :bandcamp "https://faceofman.bandcamp.com/"
+                                    :bandcamp base-bc-url
                                     :facebook "https://www.facebook.com/faceofmanband/"
                                     :twitter "https://twitter.com/faceofmanband"
                                     :itunes "https://itunes.apple.com/us/artist/face-of-man/id441404508")
-   :favorites            [:im-a-flirt :like-devils-fly :ethnopoetics :la-chat-roulette :i-dalliance :a-weekend-with-the-horse-head]
+   :favorites            [:im-a-flirt :like-devils-fly :ethnopoetics :la-chat-roulette :i-dalliance :a-weekend-with-the-horse-head :lavender]
    :active-panel         nil
    :active-project-id    nil
    :active-collection-id nil
@@ -168,11 +178,19 @@
 
 (defn ^:private add-track-url [track-id track-data]
   (let [track-name (name track-id)
-        [url sc-url score-url ps-sc-url] (map #(str % track-name) [base-music-url base-sc-url base-score-url base-ps-sc-url])
+        [url sc-url score-url ps-bc-url bc-url] (map
+                                                  #(str % track-name)
+                                                  [base-music-url base-sc-url base-score-url (str base-ps-bc-url "track/") (str base-bc-url "track/")])
+        is-ps-project? (= (-> track-data :project) :personal-space)
         has-score? (= (-> track-data :project) :compositions)
-        track-urls (merge {:soundcloud    sc-url
-                           :url           (str url ".mp3")
-                           :soundcloud-ps ps-sc-url}
+        use-sc-url? (or has-score?
+                        (= (-> track-data :collection) :covers))
+        track-urls (merge {:url (str url ".mp3")}
+                          (if is-ps-project?
+                            {:bandcamp ps-bc-url}
+                            (if use-sc-url?
+                              {:soundcloud sc-url}
+                              {:bandcamp bc-url}))
                           (if has-score?
                             {:score (str score-url ".pdf")}
                             {}))]

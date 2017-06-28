@@ -56,7 +56,7 @@ ul.tracks li {
 }
 
 img {
-    border-radius: 0.3em;
+    /*border-radius: 0.3em;*/
     vertical-align: baseline;
 }
 
@@ -81,7 +81,7 @@ li.link {
     cursor: pointer;
 }
 
-.favorite, .not-favorite, .soundcloud, .score {
+.favorite, .not-favorite, .soundcloud, .score, .bandcamp {
     position: absolute;
 }
 
@@ -90,14 +90,15 @@ li.link {
 }
 
 .favorite, .not-favorite {
-    right: 70px;
+    right: 79px;
     font-size: .9em;
     cursor: pointer;
-    margin-top: 4px;
+    /*margin-top: 4px;*/
 }
 
-.soundcloud {
+.soundcloud, .bandcamp {
     right: 30px;
+    /*top: 30px;*/
 }
 
 hr {
