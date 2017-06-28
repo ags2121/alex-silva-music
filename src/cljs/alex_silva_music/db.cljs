@@ -168,7 +168,8 @@
                                     :bandcamp base-bc-url
                                     :facebook "https://www.facebook.com/faceofmanband/"
                                     :twitter "https://twitter.com/faceofmanband"
-                                    :itunes "https://itunes.apple.com/us/artist/face-of-man/id441404508")
+                                    :itunes "https://itunes.apple.com/us/artist/face-of-man/id441404508"
+                                    :mr-records "https://mrrecords.co")
    :favorites            [:im-a-flirt :like-devils-fly :ethnopoetics :la-chat-roulette :i-dalliance :a-weekend-with-the-horse-head :lavender]
    :active-panel         nil
    :active-project-id    nil

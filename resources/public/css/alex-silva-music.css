@@ -53,6 +53,7 @@ ul.tracks li {
 
 .links {
     margin: 0 auto;
+    max-width: 14em;
 }
 
 img {
