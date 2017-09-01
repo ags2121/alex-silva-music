@@ -60,7 +60,7 @@
 ;;
 ;;
 
-(def ^:private base-url "https://dl.dropboxusercontent.com/u/12514699/alex-silva-music/")
+(def ^:private base-url "https://s3.amazonaws.com/alexsilvamusic/")
 (def ^:private base-score-url (str base-url "scores/"))
 (def ^:private base-music-url (str base-url "music/"))
 (def ^:private base-sc-url "https://soundcloud.com/faceofman/")
