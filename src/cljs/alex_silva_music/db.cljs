@@ -95,7 +95,7 @@
                                                :project    :face-of-man}
 
                                     :her-vernacular {:collection :bouquet
-                                                     :project    :face-of-man}                                    
+                                                     :project    :face-of-man}
 
                                     :same-dream {:collection :bouquet
                                                  :project    :face-of-man}
@@ -106,6 +106,9 @@
 
                                     :planes {:collection :covers
                                              :project    :face-of-man}
+
+                                    :773-love {:collection :covers :project
+                                               :face-of-man}
 
                                     :like-devils-fly {:collection :at-the-pheelharmonic
                                                       :project    :face-of-man}
@@ -170,7 +173,7 @@
                                     :twitter "https://twitter.com/faceofmanband"
                                     :itunes "https://itunes.apple.com/us/artist/face-of-man/id441404508"
                                     :mr-records "https://mrrecords.co")
-   :favorites            [:im-a-flirt :like-devils-fly :ethnopoetics :la-chat-roulette :i-dalliance :a-weekend-with-the-horse-head :lavender]
+   :favorites            [:im-a-flirt :like-devils-fly :ethnopoetics :la-chat-roulette :i-dalliance :offering :lavender]
    :active-panel         nil
    :active-project-id    nil
    :active-collection-id nil

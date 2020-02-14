@@ -49,8 +49,8 @@
 
        (apply track-link (if (:soundcloud track-data)
                            [(:soundcloud track-data) :soundcloud]
-                           [(:bandcamp track-data) :bandcamp]))
-       ])))
+                           [(:bandcamp track-data) :bandcamp]))])))
+
 
 (defn resize-top [component top-state]
   (let [this-node (reagent/dom-node component)
@@ -142,24 +142,19 @@
     (reagent/create-class
       {:component-did-mount
        (fn [this]
-         (resize-top this top)
-         )
+         (resize-top this top))
+
        :reagent-render
        (fn []
          [:div.bio-text {:class (if (is-selected?) "selected" "hidden")
                          :style {:top (str @top "px")}}
           [:div "Alex Silva is " [:br.rwd-break2] "a Brooklyn-based " [:br.rwd-break] "musician."]
-          [:div "He records and performs " [:br.rwd-break2] "as Face of Man "]
-          [:div "and is also a member of " [:br.rwd-break2] "the band " [:a {:href "http://personalspacetheband.com" :target "_blank"} "Personal Space"] "."]
           [:br]
-          [:div "Alex Silva 88 {At} " [:br.rwd-break2] "Gmail {Dot} Com"]
-          [:div {:class           "fb-like"
-                 :data-href       "https://www.facebook.com/faceofmanband/"
-                 :data-width      "200"
-                 :data-layout     "standard"
-                 :data-action     "like"
-                 :data-show-faces "false"
-                 :data-share      "false"}]])})))
+          [:div "He is a member of " [:br.rwd-break2] "the band " [:a {:href "https://personalspaceband.bandcamp.com/releases" :target "_blank"} "Personal Space"] "."]
+          [:br]
+          [:div "And releases other music under " [:br.rwd-break2] [:a {:href "https://faceofman.bandcamp.com/releases" :target "_blank"} "Face of Man"] "."]
+          [:br]
+          [:div "Alex Silva 88 {At} " [:br.rwd-break2] "Gmail {Dot} Com"]])})))
 
 (defn favorites-component [is-selected?]
   (let [favorite-tracks (subscribe [:favorite-tracks])]
