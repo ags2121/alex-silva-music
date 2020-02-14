@@ -28,8 +28,8 @@
             (s/optional-key :collection)   CollectionName
             (s/optional-key :year)         s/Int
             (s/optional-key :credits)      Credits
-            (s/optional-key :performer)    s/Keyword
-            })
+            (s/optional-key :performer)    s/Keyword})
+
 
 (s/defrecord PlayingTrack
   [track-id :- s/Keyword
@@ -94,11 +94,11 @@
    :tracks               (array-map :lavender {:collection :bouquet
                                                :project    :face-of-man}
 
+                                    :her-vernacular {:collection :bouquet
+                                                     :project    :face-of-man}                                    
+
                                     :same-dream {:collection :bouquet
                                                  :project    :face-of-man}
-
-                                    :her-vernacular {:collection :bouquet
-                                                     :project    :face-of-man}
 
                                     :im-a-flirt {:collection   :covers
                                                  :project      :face-of-man
@@ -113,8 +113,8 @@
                                     :altiloquence {:collection :at-the-pheelharmonic
                                                    :project    :face-of-man}
 
-                                    :fast-car {:collection :at-the-pheelharmonic
-                                               :project    :face-of-man}
+                                    ; :fast-car {:collection :at-the-pheelharmonic
+                                    ;            :project    :face-of-man}
 
                                     :ethnopoetics {:collection :face-of-man
                                                    :project    :face-of-man}
@@ -174,8 +174,8 @@
    :active-panel         nil
    :active-project-id    nil
    :active-collection-id nil
-   :playing-track        nil
-   })
+   :playing-track        nil})
+
 
 (defn ^:private add-track-url [track-id track-data]
   (let [track-name (name track-id)
